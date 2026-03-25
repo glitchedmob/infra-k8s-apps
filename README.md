@@ -1,6 +1,6 @@
 # infra-k8s-apps
 
-Flux-managed Kubernetes manifests for sgfdevs workloads.
+Flux-managed Kubernetes manifests for lz workloads.
 
 ## Layout
 
