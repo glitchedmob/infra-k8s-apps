@@ -8,10 +8,10 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - hello-nginx.levizitting
-      secretName: hello-nginx-levizitting-tls
+        - hello-nginx.levizitting.com
+      secretName: hello-nginx-levizitting-com-tls
   rules:
-    - host: hello-nginx.levizitting
+    - host: hello-nginx.levizitting.com
       http:
         paths:
           - path: /
