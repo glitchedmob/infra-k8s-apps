@@ -6,10 +6,10 @@ Holds the Kubernetes manifests for base infrastructure and applications deployed
 - Owns: Kubernetes desired state for bootstrap components and app workloads in the LZ k3s cluster.
 
 ## Structure
-- `src/argocd/`: Argo CD Applications that define sync order and source paths.
+- `src/k8s/argocd/`: Argo CD Applications that define sync order and source paths.
+- `src/k8s/argocd/ingress/`: Ingress for the Argo CD server.
 - `src/k8s/bootstrap/config/`: Cluster-level configuration (cert-manager issuers).
 - `src/k8s/apps/`: Application manifests deployed to the cluster.
-- `src/k8s/argocd-ingress/`: Ingress for the Argo CD server.
 
 ## Public ingress model
 - Public DNS hostnames (for example `hello-nginx.levizitting.com`) resolve to the public edge node.

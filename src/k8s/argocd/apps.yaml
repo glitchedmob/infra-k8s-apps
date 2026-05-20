@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd-ingress
+  name: apps
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-    path: src/k8s/argocd-ingress
+    path: src/k8s/apps
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
