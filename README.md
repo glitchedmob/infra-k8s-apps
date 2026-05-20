@@ -1,13 +1,14 @@
 # infra-k8s-apps
 
-Holds the Kubernetes manifests for base infrastructure and applications deployed to the LZ k3s cluster.
+Holds the Kubernetes manifests for base infrastructure and applications deployed to the LZ k3s cluster via Argo CD.
 
 ## Scope
 - Owns: Kubernetes desired state for bootstrap components and app workloads in the LZ k3s cluster.
 
 ## Structure
-- `src/k8s/flux/`: Flux Kustomizations that define reconciliation order.
-- `src/k8s/bootstrap/`: Base cluster components and cluster-level configuration.
+- `src/k8s/argocd/`: Argo CD Applications that define sync order and source paths.
+- `src/k8s/argocd/ingress/`: Ingress for the Argo CD server.
+- `src/k8s/bootstrap/config/`: Cluster-level configuration (cert-manager issuers).
 - `src/k8s/apps/`: Application manifests deployed to the cluster.
 
 ## Public ingress model
