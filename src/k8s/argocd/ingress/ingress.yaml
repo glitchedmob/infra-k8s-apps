@@ -4,15 +4,15 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/cluster-issuer: headnet-ca
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - argocd.levizitting.com
-      secretName: argocd-levizitting-com-tls
+        - argocd.headnet.levizitting.com
+      secretName: argocd-headnet-tls
   rules:
-    - host: argocd.levizitting.com
+    - host: argocd.headnet.levizitting.com
       http:
         paths:
           - path: /

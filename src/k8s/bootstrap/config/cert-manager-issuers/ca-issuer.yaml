@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: headnet-ca
+spec:
+  ca:
+    secretName: headnet-root-ca
