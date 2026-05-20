@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     cert-manager.io/cluster-issuer: headnet-ca
+    traefik.ingress.kubernetes.io/router.middlewares: argocd-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
