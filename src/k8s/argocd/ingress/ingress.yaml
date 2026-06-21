@@ -4,16 +4,16 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    cert-manager.io/cluster-issuer: headnet-ca
+    cert-manager.io/cluster-issuer: levizitting-ca
     traefik.ingress.kubernetes.io/router.middlewares: argocd-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - argocd.headnet.levizitting.com
-      secretName: argocd-headnet-tls
+        - argocd.levizitting.com
+      secretName: argocd-tls
   rules:
-    - host: argocd.headnet.levizitting.com
+    - host: argocd.levizitting.com
       http:
         paths:
           - path: /

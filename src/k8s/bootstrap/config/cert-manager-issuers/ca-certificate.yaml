@@ -1,17 +1,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: headnet-root-ca
+  name: levizitting-root-ca
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: headnet.levizitting.com Root CA
+  commonName: levizitting.com Root CA
   subject:
     organizations:
       - levizitting.com
   dnsNames:
-    - headnet.levizitting.com
-  secretName: headnet-root-ca
+    - levizitting.com
+  secretName: levizitting-root-ca
   privateKey:
     algorithm: ECDSA
     size: 256

@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: headnet-ca
+  name: levizitting-ca
 spec:
   ca:
-    secretName: headnet-root-ca
+    secretName: levizitting-root-ca
