@@ -9,6 +9,7 @@ metadata:
 data:
   url: https://argocd.levizitting.com
   admin.enabled: "true"
+  oidc.tls.insecure.skip.verify: "true"
   dex.config: |
     connectors:
       - type: github
