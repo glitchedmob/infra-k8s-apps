@@ -1,0 +1,82 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openbao
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  sources:
+    - chart: openbao
+      repoURL: https://openbao.github.io/openbao-helm
+      targetRevision: 0.27.*
+      helm:
+        values: |
+          injector:
+            enabled: false
+          csi:
+            enabled: false
+          server:
+            ha:
+              enabled: true
+              replicas: 3
+              raft:
+                enabled: true
+                config: |
+                  ui = true
+
+                  listener "tcp" {
+                    tls_disable = 1
+                    address = "[::]:8200"
+                    cluster_address = "[::]:8201"
+                  }
+
+                  storage "raft" {
+                    path = "/openbao/data"
+                    retry_join {
+                      leader_api_addr = "http://openbao-0.openbao-internal:8200"
+                    }
+                    retry_join {
+                      leader_api_addr = "http://openbao-1.openbao-internal:8200"
+                    }
+                    retry_join {
+                      leader_api_addr = "http://openbao-2.openbao-internal:8200"
+                    }
+                  }
+
+                  service_registration "kubernetes" {}
+
+                  seal "awskms" {
+                    region     = "us-east-2"
+                    kms_key_id = "alias/openbao-unseal"
+                  }
+            dataStorage:
+              enabled: true
+              size: 10Gi
+            extraSecretEnvironmentVars:
+              - envName: AWS_ACCESS_KEY_ID
+                secretName: external-secrets-aws-creds
+                secretKey: access_key_id
+              - envName: AWS_SECRET_ACCESS_KEY
+                secretName: external-secrets-aws-creds
+                secretKey: secret_access_key
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/openbao
+      targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openbao
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
