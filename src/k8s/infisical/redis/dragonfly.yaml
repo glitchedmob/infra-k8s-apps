@@ -4,6 +4,8 @@ metadata:
   name: infisical-redis
 spec:
   replicas: 2
+  args:
+    - --default_lua_flags=allow-undeclared-keys
   authentication:
     passwordFromSecret:
       name: infisical-redis-auth
