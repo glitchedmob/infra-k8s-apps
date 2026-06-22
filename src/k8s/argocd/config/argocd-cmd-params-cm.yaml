@@ -8,7 +8,3 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   server.insecure: "true"
-  application.controller.replicas: "2"
-  server.replicas: "2"
-  repo.server.replicas: "2"
-  redis.server.replicas: "2"
