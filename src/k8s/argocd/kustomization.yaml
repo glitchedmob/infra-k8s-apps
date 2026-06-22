@@ -7,5 +7,6 @@ resources:
   - cert-manager.yaml
   - argocd-config.yaml
   - bootstrap-config.yaml
+  - infisical.yaml
   - apps.yaml
   - argocd-ingress.yaml
