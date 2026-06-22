@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infisical
+  namespace: infisical
+  annotations:
+    cert-manager.io/cluster-issuer: levizitting-ca
+    traefik.ingress.kubernetes.io/router.middlewares: infisical-infisical-https-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - secrets.levizitting.com
+      secretName: infisical-tls
+  rules:
+    - host: secrets.levizitting.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: infisical
+                port:
+                  number: 8080

@@ -8,5 +8,6 @@ resources:
   - argocd-config.yaml
   - bootstrap-config.yaml
   - infisical.yaml
+  - infisical-server.yaml
   - apps.yaml
   - argocd-ingress.yaml
