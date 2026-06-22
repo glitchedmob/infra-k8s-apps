@@ -16,6 +16,6 @@ data:
         id: github
         name: GitHub
         config:
-          clientID: Ov23li4rqAsr8KhLdKTf
+          clientID: $argocd-github-dex:client-id
           clientSecret: $argocd-github-dex:client-secret
           useLoginAsID: true
