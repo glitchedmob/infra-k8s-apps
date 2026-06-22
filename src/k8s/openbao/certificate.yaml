@@ -11,5 +11,8 @@ spec:
     name: levizitting-ca
     kind: ClusterIssuer
     group: cert-manager.io
+  usages:
+    - digital signature
+    - key encipherment
   dnsNames:
     - secrets.levizitting.com
