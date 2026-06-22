@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - cert-manager-issuers
   - external-secrets-stores
-  - argocd-secrets
   - coredns
