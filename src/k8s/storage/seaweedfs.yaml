@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seaweedfs
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  project: default
+  source:
+    chart: seaweedfs
+    repoURL: https://seaweedfs.github.io/seaweedfs/helm
+    targetRevision: 4.35.*
+    helm:
+      values: |
+        master:
+          replicas: 1
+          affinity: ""
+          data:
+            type: persistentVolumeClaim
+            size: 2Gi
+            storageClass: longhorn
+
+        volume:
+          replicas: 1
+          affinity: ""
+          dataDirs:
+            - name: data1
+              type: persistentVolumeClaim
+              size: 20Gi
+              storageClass: longhorn
+          idx:
+            type: persistentVolumeClaim
+            size: 5Gi
+            storageClass: longhorn
+
+        filer:
+          replicas: 1
+          affinity: ""
+          enablePVC: true
+          storage: 10Gi
+          storageClass: longhorn
+          s3:
+            enabled: true
+            enableAuth: true
+            existingConfigSecret: seaweedfs-s3-config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: seaweedfs
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
