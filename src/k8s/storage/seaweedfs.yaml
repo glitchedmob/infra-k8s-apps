@@ -13,33 +13,65 @@ spec:
     targetRevision: 4.35.*
     helm:
       values: |
+        global:
+          seaweedfs:
+            enableReplication: true
+            replicationPlacement: "001"
+
         master:
-          replicas: 1
-          affinity: ""
+          replicas: 3
+          defaultReplication: "001"
           data:
             type: persistentVolumeClaim
             size: 2Gi
-            storageClass: longhorn
+            storageClass: local-path
 
         volume:
-          replicas: 1
-          affinity: ""
+          replicas: 3
           dataDirs:
             - name: data1
               type: persistentVolumeClaim
               size: 20Gi
-              storageClass: longhorn
+              storageClass: local-path
           idx:
             type: persistentVolumeClaim
             size: 5Gi
-            storageClass: longhorn
+            storageClass: local-path
 
         filer:
-          replicas: 1
-          affinity: ""
-          enablePVC: true
-          storage: 10Gi
-          storageClass: longhorn
+          replicas: 2
+          data:
+            type: persistentVolumeClaim
+            size: 10Gi
+            storageClass: local-path
+          defaultReplicaPlacement: "001"
+          extraEnvironmentVars:
+            WEED_MYSQL_ENABLED: "false"
+            WEED_LEVELDB2_ENABLED: "false"
+            WEED_POSTGRES2_ENABLED: "true"
+            WEED_POSTGRES2_SSLMODE: "disable"
+            WEED_POSTGRES2_CREATETABLE: 'CREATE TABLE IF NOT EXISTS "%s" (dirhash BIGINT, name VARCHAR(65535), directory VARCHAR(65535), meta bytea, PRIMARY KEY (dirhash, name))'
+          secretExtraEnvironmentVars:
+            WEED_POSTGRES2_HOSTNAME:
+              secretKeyRef:
+                name: seaweedfs-db-app
+                key: host
+            WEED_POSTGRES2_PORT:
+              secretKeyRef:
+                name: seaweedfs-db-app
+                key: port
+            WEED_POSTGRES2_DATABASE:
+              secretKeyRef:
+                name: seaweedfs-db-app
+                key: dbname
+            WEED_POSTGRES2_USERNAME:
+              secretKeyRef:
+                name: seaweedfs-db-app
+                key: username
+            WEED_POSTGRES2_PASSWORD:
+              secretKeyRef:
+                name: seaweedfs-db-app
+                key: password
           s3:
             enabled: true
             enableAuth: true
