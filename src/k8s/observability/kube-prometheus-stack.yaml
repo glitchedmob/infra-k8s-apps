@@ -88,10 +88,20 @@ spec:
 
           grafana:
             enabled: true
+            replicas: 2
+            podDisruptionBudget:
+              minAvailable: 1
             sidecar:
               datasources:
                 url: http://thanos-querier.monitoring.svc.cluster.local:10902
             "grafana.ini":
+              database:
+                type: postgres
+                host: grafana-db-rw.monitoring.svc.cluster.local:5432
+                name: grafana
+                user: grafana
+                password: $__file{/etc/secrets/grafana-db/password}
+                ssl_mode: disable
               server:
                 domain: grafana.levizitting.com
                 root_url: https://grafana.levizitting.com
@@ -104,9 +114,13 @@ spec:
                 auto_assign_org_role: Admin
                 role_attribute_path: "[login=='glitchedmob'][0] && 'Admin' || 'Viewer'"
             envFromSecret: grafana-github-oauth
+            extraSecretMounts:
+              - name: grafana-db
+                secretName: grafana-db-app
+                mountPath: /etc/secrets/grafana-db
+                readOnly: true
             persistence:
-              enabled: true
-              size: 1Gi
+              enabled: false
             resources:
               requests:
                 cpu: 100m
