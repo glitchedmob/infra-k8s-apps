@@ -76,6 +76,10 @@ spec:
               enabled: true
               enableAuth: true
               existingConfigSecret: seaweedfs-s3-config
+              createBuckets:
+                - name: loki-chunks
+                - name: loki-ruler
+                - name: loki-admin
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
       path: src/k8s/storage/seaweedfs-resources
       targetRevision: main
