@@ -81,6 +81,7 @@ spec:
                 - name: loki-ruler
                 - name: loki-admin
                 - name: tempo-traces
+                - name: thanos-metrics
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
       path: src/k8s/storage/seaweedfs-resources
       targetRevision: main

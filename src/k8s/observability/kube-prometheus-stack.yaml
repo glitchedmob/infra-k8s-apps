@@ -7,95 +7,112 @@ metadata:
     argocd.argoproj.io/sync-wave: "-3"
 spec:
   project: default
-  source:
-    chart: kube-prometheus-stack
-    repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: 75.6.*
-    helm:
-      values: |
-        alertmanager:
-          enabled: false
+  sources:
+    - chart: kube-prometheus-stack
+      repoURL: https://prometheus-community.github.io/helm-charts
+      targetRevision: 75.6.*
+      helm:
+        values: |
+          alertmanager:
+            enabled: false
 
-        defaultRules:
-          create: false
+          defaultRules:
+            create: false
 
-        kubeStateMetrics:
-          enabled: true
-          resources:
-            requests:
-              cpu: 25m
-              memory: 64Mi
-            limits:
-              cpu: 100m
-              memory: 128Mi
-
-        nodeExporter:
-          enabled: true
-          resources:
-            requests:
-              cpu: 25m
-              memory: 64Mi
-            limits:
-              cpu: 100m
-              memory: 128Mi
-
-        prometheusOperator:
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
-
-        prometheus:
-          prometheusSpec:
-            enableRemoteWriteReceiver: true
-            retention: 15d
-            retentionSize: 15GB
-            storageSpec:
-              volumeClaimTemplate:
-                spec:
-                  accessModes:
-                    - ReadWriteOnce
-                  resources:
-                    requests:
-                      storage: 20Gi
+          kubeStateMetrics:
+            enabled: true
             resources:
               requests:
-                cpu: 200m
-                memory: 512Mi
+                cpu: 25m
+                memory: 64Mi
               limits:
-                cpu: 1000m
-                memory: 2Gi
-          service:
-            type: NodePort
-            nodePort: 30909
+                cpu: 100m
+                memory: 128Mi
 
-        grafana:
-          enabled: true
-          "grafana.ini":
-            server:
-              domain: grafana.levizitting.com
-              root_url: https://grafana.levizitting.com
-            auth.github:
-              enabled: true
-              client_id: ${GF_AUTH_GITHUB_CLIENT_ID}
-              client_secret: ${GF_AUTH_GITHUB_CLIENT_SECRET}
-              allowed_users: levi
-              auto_assign_org_role: Admin
-              role_attribute_strict: true
-          envFromSecret: grafana-github-oauth
-          persistence:
+          nodeExporter:
             enabled: true
-            size: 1Gi
-          resources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+
+          prometheusOperator:
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+
+          prometheus:
+            prometheusSpec:
+              enableRemoteWriteReceiver: true
+              replicas: 2
+              podAntiAffinity: "hard"
+              externalLabels:
+                cluster: lz
+              retention: 6h
+              retentionSize: 15GB
+              disableCompaction: true
+              storageSpec:
+                volumeClaimTemplate:
+                  spec:
+                    accessModes:
+                      - ReadWriteOnce
+                    resources:
+                      requests:
+                        storage: 20Gi
+              resources:
+                requests:
+                  cpu: 200m
+                  memory: 512Mi
+                limits:
+                  cpu: 1000m
+                  memory: 2Gi
+              thanos:
+                objectStorageConfig:
+                  existingSecret:
+                    name: thanos-objstore-config
+                    key: objstore.yml
+            service:
+              type: NodePort
+              nodePort: 30909
+            thanosService:
+              enabled: true
+            thanosServiceMonitor:
+              enabled: true
+
+          grafana:
+            enabled: true
+            "grafana.ini":
+              server:
+                domain: grafana.levizitting.com
+                root_url: https://grafana.levizitting.com
+              auth.github:
+                enabled: true
+                client_id: ${GF_AUTH_GITHUB_CLIENT_ID}
+                client_secret: ${GF_AUTH_GITHUB_CLIENT_SECRET}
+                allowed_users: levi
+                auto_assign_org_role: Admin
+                role_attribute_strict: true
+            envFromSecret: grafana-github-oauth
+            persistence:
+              enabled: true
+              size: 1Gi
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/observability/thanos
+      targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
