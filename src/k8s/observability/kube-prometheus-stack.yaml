@@ -99,9 +99,10 @@ spec:
                 enabled: true
                 client_id: ${GF_AUTH_GITHUB_CLIENT_ID}
                 client_secret: ${GF_AUTH_GITHUB_CLIENT_SECRET}
-                allowed_users: levi
+                allowed_users: glitchedmob
+                auto_assign_org: true
                 auto_assign_org_role: Admin
-                role_attribute_strict: true
+                role_attribute_path: "[login=='glitchedmob'][0] && 'Admin' || 'Viewer'"
             envFromSecret: grafana-github-oauth
             persistence:
               enabled: true
