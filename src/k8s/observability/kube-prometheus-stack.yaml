@@ -88,6 +88,9 @@ spec:
 
           grafana:
             enabled: true
+            sidecar:
+              datasources:
+                url: http://thanos-querier.monitoring.svc.cluster.local:10902
             "grafana.ini":
               server:
                 domain: grafana.levizitting.com
@@ -110,6 +113,17 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
+            additionalDataSources:
+              - name: Loki
+                type: loki
+                url: http://loki-gateway.monitoring.svc.cluster.local:80
+                access: proxy
+                editable: false
+              - name: Tempo
+                type: tempo
+                url: http://tempo.monitoring.svc.cluster.local:3100
+                access: proxy
+                editable: false
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
       path: src/k8s/observability/thanos
       targetRevision: main
