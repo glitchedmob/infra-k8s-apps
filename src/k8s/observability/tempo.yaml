@@ -9,10 +9,11 @@ spec:
   project: default
   source:
     chart: tempo
-    repoURL: https://grafana.github.io/helm-charts
-    targetRevision: 2.8.*
+    repoURL: https://grafana-community.github.io/helm-charts
+    targetRevision: 2.2.*
     helm:
       values: |
+        replicas: 3
         tempo:
           receivers:
             otlp:
@@ -21,11 +22,23 @@ spec:
                   endpoint: 0.0.0.0:4317
                 http:
                   endpoint: 0.0.0.0:4318
+          reportingEnabled: false
+          retention: 168h
+          ingester:
+            max_block_duration: 5m
           storage:
             trace:
-              backend: local
-              local:
-                path: /var/tempo/traces
+              backend: s3
+              block:
+                version: vParquet5
+              s3:
+                bucket: tempo-traces
+                endpoint: seaweedfs-s3.seaweedfs.svc.cluster.local:8333
+                region: us-east-1
+                insecure: true
+                forcepathstyle: true
+              wal:
+                path: /var/tempo/wal
           resources:
             requests:
               cpu: 50m
@@ -33,10 +46,12 @@ spec:
             limits:
               cpu: 300m
               memory: 512Mi
+          extraEnvFrom:
+            - secretRef:
+                name: seaweedfs-s3-observability
         persistence:
           enabled: true
-          size: 10Gi
-        searchEnabled: false
+          size: 5Gi
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
