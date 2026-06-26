@@ -4,3 +4,4 @@ resources:
   - cert-manager-issuers
   - external-secrets-stores
   - coredns
+  - traefik
