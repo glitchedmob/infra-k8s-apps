@@ -10,41 +10,38 @@ spec:
   sources:
     - chart: oauth2-proxy
       repoURL: https://oauth2-proxy.github.io/manifests
-      targetRevision: 7.x.*
+      targetRevision: 10.x.*
       helm:
         values: |
           podAnnotations:
             reloader.stakater.com/auto: "true"
 
-          config: {}
+          config:
+            existingSecret: oauth2-proxy
 
           extraEnv:
-            - name: OAUTH2_PROXY_CLIENT_ID
-              value: oauth2-proxy
             - name: OAUTH2_PROXY_PROVIDER
               value: oidc
             - name: OAUTH2_PROXY_OIDC_ISSUER_URL
               value: https://sso.levizitting.com
             - name: OAUTH2_PROXY_REDIRECT_URL
               value: https://auth.levizitting.com/oauth2/callback
-            - name: OAUTH2_PROXY_COOKIE_DOMAIN
+            - name: OAUTH2_PROXY_COOKIE_DOMAINS
               value: ".levizitting.com"
             - name: OAUTH2_PROXY_UPSTREAMS
               value: static://200
             - name: OAUTH2_PROXY_SET_AUTHORIZATION_HEADER
               value: "true"
             - name: OAUTH2_PROXY_ALLOWED_USERS
-              value: "glitchedmob"
-            - name: OAUTH2_PROXY_WHITELIST_REDIRECT_DOMAINS
+              value: "me@levizitting.com"
+            - name: OAUTH2_PROXY_WHITELIST_DOMAINS
               value: ".levizitting.com"
             - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
               value: "true"
             - name: OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY
               value: "true"
-
-          extraEnvFrom:
-            - secretRef:
-                name: dex-oauth2-proxy-secrets
+            - name: OAUTH2_PROXY_REVERSE_PROXY
+              value: "true"
 
           ingress:
             enabled: false
