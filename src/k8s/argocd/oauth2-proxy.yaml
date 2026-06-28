@@ -36,10 +36,25 @@ spec:
               value: ".levizitting.com"
             - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
               value: "true"
+            - name: OAUTH2_PROXY_SSL_CA_CERT
+              value: /etc/ssl/certs/levizitting-ca/ca.crt
 
           extraEnvFrom:
             - secretRef:
                 name: dex-oauth2-proxy-secrets
+
+          extraVolumes:
+            - name: ca-cert
+              secret:
+                secretName: oauth2-proxy-tls
+                items:
+                  - key: ca.crt
+                    path: ca.crt
+
+          extraVolumeMounts:
+            - name: ca-cert
+              mountPath: /etc/ssl/certs/levizitting-ca
+              readOnly: true
 
           ingress:
             enabled: false
