@@ -16,6 +16,30 @@ spec:
           podAnnotations:
             reloader.stakater.com/auto: "true"
 
+          replicaCount: 3
+
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        app.kubernetes.io/name: dex
+                    topologyKey: kubernetes.io/hostname
+
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: dex
+
           envFrom:
             - secretRef:
                 name: dex-secrets
@@ -24,7 +48,9 @@ spec:
             issuer: https://sso.levizitting.com
 
             storage:
-              type: memory
+              type: kubernetes
+              config:
+                inCluster: true
 
             web:
               http: 0.0.0.0:5556
