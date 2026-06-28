@@ -22,4 +22,4 @@ spec:
               service:
                 name: seaweedfs-filer
                 port:
-                  number: 8989
+                  number: 8888

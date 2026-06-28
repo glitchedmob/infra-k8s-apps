@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
   - middleware-https-redirect.yaml
   - certificate.yaml
-  - ingress.yaml
+  - ingressroute.yaml
