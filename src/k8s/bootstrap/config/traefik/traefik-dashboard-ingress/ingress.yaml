@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: levizitting-ca
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-traefik-dashboard-https-redirect@kubernetescrd,oauth2-proxy-oauth2-forward-auth@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - traefik.levizitting.com
+      secretName: traefik-dashboard-tls
+  rules:
+    - host: traefik.levizitting.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik
+                port:
+                  number: 9000
