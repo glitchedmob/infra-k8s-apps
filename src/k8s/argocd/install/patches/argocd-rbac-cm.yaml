@@ -4,5 +4,5 @@ metadata:
   name: argocd-rbac-cm
 data:
   policy.csv: |
-    g, glitchedmob, role:admin
-  scopes: "[login]"
+    g, me@levizitting.com, role:admin
+  scopes: "[email]"

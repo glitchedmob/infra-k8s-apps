@@ -13,6 +13,12 @@ spec:
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
+  ignoreDifferences:
+    - group: cert-manager.io
+      kind: Certificate
+      jsonPointers:
+        - /spec/duration
+        - /spec/renewBefore
   syncPolicy:
     automated:
       prune: true
