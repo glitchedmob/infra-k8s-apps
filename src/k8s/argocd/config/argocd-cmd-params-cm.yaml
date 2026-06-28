@@ -9,3 +9,4 @@ metadata:
 data:
   server.insecure: "true"
   redis.server: argocd-redis-ha-haproxy:6379
+  dexserver.disable: "true"

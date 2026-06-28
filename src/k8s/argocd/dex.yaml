@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dex
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  sources:
+    - chart: dex
+      repoURL: https://charts.dexidp.io
+      targetRevision: 0.x.*
+      helm:
+        values: |
+          envFrom:
+            - secretRef:
+                name: dex-secrets
+
+          config:
+            issuer: https://sso.levizitting.com
+
+            storage:
+              type: memory
+
+            web:
+              http: 0.0.0.0:5556
+
+            connectors:
+              - type: github
+                id: github
+                name: GitHub
+                config:
+                  clientID: "Ov23li3AFGEhcY4iyMzt"
+                  clientSecret: "${GITHUB_CLIENT_SECRET}"
+                  redirectURI: https://sso.levizitting.com/callback
+                  useLoginAsID: true
+
+            staticClients:
+              - id: argocd
+                name: ArgoCD
+                secret: "${ARGOCD_CLIENT_SECRET}"
+                redirectURIs:
+                  - https://argocd.levizitting.com/auth/callback
+              - id: grafana
+                name: Grafana
+                secret: "${GRAFANA_CLIENT_SECRET}"
+                redirectURIs:
+                  - https://grafana.levizitting.com/login/generic_oauth
+              - id: oauth2-proxy
+                name: oauth2-proxy
+                secret: "${OAUTH2_PROXY_CLIENT_SECRET}"
+                redirectURIs:
+                  - https://auth.levizitting.com/oauth2/callback
+              - id: openbao
+                name: OpenBao
+                secret: "${OPENBAO_CLIENT_SECRET}"
+                redirectURIs:
+                  - https://secrets.levizitting.com/ui/vault/auth/oidc/oidc/callback
+                  - https://secrets.levizitting.com/auth/oidc/callback
+
+            oauth2:
+              skipApproval: true
+              alwaysShowLoginScreen: false
+
+          service:
+            port: 5556
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/dex
+      targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dex
+  ignoreDifferences:
+    - group: cert-manager.io
+      kind: Certificate
+      jsonPointers:
+        - /spec/duration
+        - /spec/renewBefore
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

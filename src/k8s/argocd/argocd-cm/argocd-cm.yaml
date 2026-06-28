@@ -10,12 +10,10 @@ data:
   url: https://argocd.levizitting.com
   admin.enabled: "true"
   oidc.tls.insecure.skip.verify: "true"
-  dex.config: |
-    connectors:
-      - type: github
-        id: github
-        name: GitHub
-        config:
-          clientID: $argocd-github-dex:client-id
-          clientSecret: $argocd-github-dex:client-secret
-          useLoginAsID: true
+  oidc.config: |
+    name: Dex
+    issuer: https://sso.levizitting.com
+    clientID: argocd
+    clientSecret: $dex-argocd-client-secret:client-secret
+    requestedScopes: ["openid", "profile", "email", "groups"]
+    requestedIDTokenClaims: {"groups": {"essential": true}}
