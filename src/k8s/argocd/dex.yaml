@@ -42,22 +42,22 @@ spec:
             staticClients:
               - id: argocd
                 name: ArgoCD
-                secret: "${ARGOCD_CLIENT_SECRET}"
+                secretEnv: ARGOCD_CLIENT_SECRET
                 redirectURIs:
                   - https://argocd.levizitting.com/auth/callback
               - id: grafana
                 name: Grafana
-                secret: "${GRAFANA_CLIENT_SECRET}"
+                secretEnv: GRAFANA_CLIENT_SECRET
                 redirectURIs:
                   - https://grafana.levizitting.com/login/generic_oauth
               - id: oauth2-proxy
                 name: oauth2-proxy
-                secret: "${OAUTH2_PROXY_CLIENT_SECRET}"
+                secretEnv: OAUTH2_PROXY_CLIENT_SECRET
                 redirectURIs:
                   - https://auth.levizitting.com/oauth2/callback
               - id: openbao
                 name: OpenBao
-                secret: "${OPENBAO_CLIENT_SECRET}"
+                secretEnv: OPENBAO_CLIENT_SECRET
                 redirectURIs:
                   - https://secrets.levizitting.com/ui/vault/auth/oidc/oidc/callback
                   - https://secrets.levizitting.com/auth/oidc/callback

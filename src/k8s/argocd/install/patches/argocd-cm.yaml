@@ -10,5 +10,5 @@ data:
     name: Dex
     issuer: https://sso.levizitting.com
     clientID: argocd
-    clientSecret: $argocd-secret:oidc.argocd.clientSecret
+    clientSecret: $oidc.argocd.clientSecret
     requestedScopes: ["openid", "profile", "email"]
