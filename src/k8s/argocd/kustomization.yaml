@@ -7,10 +7,10 @@ resources:
   - cnpg.yaml
   - external-secrets.yaml
   - cert-manager.yaml
+  - reloader.yaml
   - dex.yaml
   - oauth2-proxy.yaml
-  - argocd-config.yaml
-  - argocd-cm-config.yaml
+  - argocd-install.yaml
   - bootstrap-config.yaml
   - openbao.yaml
   - argocd-ingress.yaml

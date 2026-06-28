@@ -13,6 +13,9 @@ spec:
       targetRevision: 0.x.*
       helm:
         values: |
+          podAnnotations:
+            reloader.stakater.com/auto: "true"
+
           envFrom:
             - secretRef:
                 name: dex-secrets

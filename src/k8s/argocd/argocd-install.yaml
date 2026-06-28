@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd-config
+  name: argocd-install
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -9,11 +9,21 @@ spec:
   project: default
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-    path: src/k8s/argocd/config
+    path: src/k8s/argocd/install
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
+    namespace: argocd
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: argocd-secret
+      namespace: argocd
+      jsonPointers:
+        - /data
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

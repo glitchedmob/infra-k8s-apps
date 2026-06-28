@@ -89,6 +89,8 @@ spec:
           grafana:
             enabled: true
             replicas: 2
+            podAnnotations:
+              reloader.stakater.com/auto: "true"
             podDisruptionBudget:
               minAvailable: 1
             topologySpreadConstraints:

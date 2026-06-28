@@ -13,6 +13,9 @@ spec:
       targetRevision: 7.x.*
       helm:
         values: |
+          podAnnotations:
+            reloader.stakater.com/auto: "true"
+
           config: {}
 
           extraEnv:
