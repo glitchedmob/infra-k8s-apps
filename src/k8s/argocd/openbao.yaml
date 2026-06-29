@@ -54,6 +54,17 @@ spec:
             dataStorage:
               enabled: true
               size: 10Gi
+            volumes:
+              - name: levizitting-ca-bundle
+                configMap:
+                  name: levizitting-ca-bundle
+            volumeMounts:
+              - name: levizitting-ca-bundle
+                mountPath: /etc/ssl/certs/levizitting-ca.crt
+                subPath: ca.crt
+                readOnly: true
+            extraEnvironmentVars:
+              SSL_CERT_DIR: /etc/ssl/certs
             extraSecretEnvironmentVars:
               - envName: AWS_ACCESS_KEY_ID
                 secretName: external-secrets-aws-creds
