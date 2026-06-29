@@ -33,6 +33,7 @@ spec:
                 type: persistentVolumeClaim
                 size: 20Gi
                 storageClass: local-path
+                maxVolumes: 0
             idx:
               type: persistentVolumeClaim
               size: 5Gi
