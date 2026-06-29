@@ -10,17 +10,23 @@ spec:
   source:
     chart: reloader
     repoURL: https://stakater.github.io/stakater-charts
-    targetRevision: 1.x.*
+    targetRevision: 2.x.*
     helm:
       values: |
-        replicaCount: 1
-        resources:
-          requests:
-            cpu: 25m
-            memory: 64Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
+        reloader:
+          enableHA: true
+          deployment:
+            replicas: 2
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
   destination:
     server: https://kubernetes.default.svc
     namespace: reloader
