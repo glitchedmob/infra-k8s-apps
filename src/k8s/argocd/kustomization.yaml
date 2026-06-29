@@ -7,6 +7,7 @@ resources:
   - cnpg.yaml
   - external-secrets.yaml
   - cert-manager.yaml
+  - trust-manager.yaml
   - reloader.yaml
   - dex.yaml
   - oauth2-proxy.yaml
