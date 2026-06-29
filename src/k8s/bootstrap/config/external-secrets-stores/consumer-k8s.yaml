@@ -1,0 +1,95 @@
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: argocd-k8s
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: external-secrets
+      server:
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+          namespace: external-secrets
+      auth:
+        token:
+          bearerToken:
+            name: eso-argocd-reader-token
+            namespace: external-secrets
+            key: token
+  conditions:
+    - namespaces:
+        - argocd
+---
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: grafana-k8s
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: external-secrets
+      server:
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+          namespace: external-secrets
+      auth:
+        token:
+          bearerToken:
+            name: eso-grafana-reader-token
+            namespace: external-secrets
+            key: token
+  conditions:
+    - namespaces:
+        - monitoring
+---
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: oauth2-proxy-k8s
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: external-secrets
+      server:
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+          namespace: external-secrets
+      auth:
+        token:
+          bearerToken:
+            name: eso-oauth2-proxy-reader-token
+            namespace: external-secrets
+            key: token
+  conditions:
+    - namespaces:
+        - oauth2-proxy
+---
+apiVersion: external-secrets.io/v1
+kind: ClusterSecretStore
+metadata:
+  name: dex-k8s
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: external-secrets
+      server:
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+          namespace: external-secrets
+      auth:
+        token:
+          bearerToken:
+            name: eso-dex-reader-token
+            namespace: external-secrets
+            key: token
+  conditions:
+    - namespaces:
+        - dex

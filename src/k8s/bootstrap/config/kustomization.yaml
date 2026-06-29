@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - cert-manager-issuers
   - external-secrets-stores
+  - external-secrets-cache
   - trust-manager
   - coredns
   - traefik

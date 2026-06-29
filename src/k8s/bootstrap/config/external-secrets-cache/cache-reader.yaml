@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eso-cache-reader
+  namespace: external-secrets
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: eso-cache-reader
+  namespace: external-secrets
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["ssm-cache"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eso-cache-reader
+  namespace: external-secrets
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: eso-cache-reader
+subjects:
+  - kind: ServiceAccount
+    name: eso-cache-reader
+    namespace: external-secrets
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eso-cache-reader-token
+  namespace: external-secrets
+  annotations:
+    kubernetes.io/service-account.name: eso-cache-reader
+type: kubernetes.io/service-account-token

@@ -61,29 +61,29 @@ spec:
                 name: GitHub
                 config:
                   clientID: "Ov23li3AFGEhcY4iyMzt"
-                  clientSecret: "${GITHUB_CLIENT_SECRET}"
+                  clientSecret: "${githubClientSecret}"
                   redirectURI: https://sso.levizitting.com/callback
                   useLoginAsID: true
 
             staticClients:
               - id: argocd
                 name: ArgoCD
-                secretEnv: ARGOCD_CLIENT_SECRET
+                secretEnv: argocdClientSecret
                 redirectURIs:
                   - https://argocd.levizitting.com/auth/callback
               - id: grafana
                 name: Grafana
-                secretEnv: GRAFANA_CLIENT_SECRET
+                secretEnv: grafanaClientSecret
                 redirectURIs:
                   - https://grafana.levizitting.com/login/generic_oauth
               - id: oauth2-proxy
                 name: oauth2-proxy
-                secretEnv: OAUTH2_PROXY_CLIENT_SECRET
+                secretEnv: oauth2ProxyClientSecret
                 redirectURIs:
                   - https://auth.levizitting.com/oauth2/callback
               - id: openbao
                 name: OpenBao
-                secretEnv: OPENBAO_CLIENT_SECRET
+                secretEnv: openbaoClientSecret
                 redirectURIs:
                   - https://secrets.levizitting.com/ui/vault/auth/oidc/oidc/callback
                   - https://secrets.levizitting.com/auth/oidc/callback
