@@ -79,6 +79,11 @@ spec:
           service:
             type: NodePort
             nodePort: 31001
+        lokiCanary:
+          extraArgs:
+            - -labels=pod=$(POD_NAME),service=loki-canary
+          podLabels:
+            service: loki-canary
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

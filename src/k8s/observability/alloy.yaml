@@ -47,6 +47,10 @@ spec:
                   source_labels = ["__meta_kubernetes_pod_label_app"]
                   target_label  = "app"
                 }
+                rule {
+                  source_labels = ["__meta_kubernetes_pod_label_service"]
+                  target_label  = "service"
+                }
               }
 
               loki.process "parse_logs" {
