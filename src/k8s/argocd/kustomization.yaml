@@ -11,6 +11,7 @@ resources:
   - reloader.yaml
   - dex.yaml
   - oauth2-proxy.yaml
+  - headlamp.yaml
   - argocd-install.yaml
   - bootstrap-config.yaml
   - openbao.yaml
