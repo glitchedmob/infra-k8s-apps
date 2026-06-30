@@ -81,7 +81,11 @@ spec:
             nodePort: 31001
         lokiCanary:
           extraArgs:
-            - -labels=pod=$(POD_NAME),service=loki-canary
+            - -labelname=pod
+            - -labelvalue=$(POD_NAME)
+            - -streamname=app
+            - -streamvalue=loki-canary
+            - -interval=10s
           podLabels:
             service: loki-canary
   destination:
