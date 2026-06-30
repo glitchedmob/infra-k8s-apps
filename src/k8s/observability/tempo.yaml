@@ -65,6 +65,9 @@ spec:
           compactor:
             compaction:
               block_retention: 168h
+          query_frontend:
+            metrics:
+              max_duration: 168h
           storage:
             trace:
               backend: s3

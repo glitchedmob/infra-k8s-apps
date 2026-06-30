@@ -4,3 +4,5 @@ resources:
   - secretstore.yaml
   - externalsecret.yaml
   - querier.yaml
+  - store.yaml
+  - compactor.yaml
