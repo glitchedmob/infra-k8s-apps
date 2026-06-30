@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - longhorn.yaml
   - longhorn-ingress.yaml
-  - grafana-db.yaml
   - seaweedfs-db.yaml
   - seaweedfs.yaml
   - seaweedfs-filer-ingress.yaml

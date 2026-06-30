@@ -1,25 +1,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana-ingress
+  name: grafana-infra
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "-4"
 spec:
   project: default
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-    path: src/k8s/observability/grafana-ingress
+    path: src/k8s/grafana-infra
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
+    namespace: monitoring
   ignoreDifferences:
     - group: cert-manager.io
       kind: Certificate
       jsonPointers:
         - /spec/duration
         - /spec/renewBefore
+    - group: external-secrets.io
+      kind: ExternalSecret
+      jqPathExpressions:
+        - .spec.data[].remoteRef.conversionStrategy
+        - .spec.data[].remoteRef.decodingStrategy
+        - .spec.data[].remoteRef.metadataPolicy
+        - .spec.data[].remoteRef.nullBytePolicy
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

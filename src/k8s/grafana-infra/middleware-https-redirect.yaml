@@ -3,6 +3,8 @@ kind: Middleware
 metadata:
   name: grafana-https-redirect
   namespace: monitoring
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   redirectScheme:
     scheme: https

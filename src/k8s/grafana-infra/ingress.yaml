@@ -4,6 +4,7 @@ metadata:
   name: grafana
   namespace: monitoring
   annotations:
+    argocd.argoproj.io/sync-wave: "3"
     cert-manager.io/cluster-issuer: levizitting-ca
     traefik.ingress.kubernetes.io/router.middlewares: monitoring-grafana-https-redirect@kubernetescrd
 spec:

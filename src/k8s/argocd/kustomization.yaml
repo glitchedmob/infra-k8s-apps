@@ -9,6 +9,7 @@ resources:
   - cert-manager.yaml
   - trust-manager.yaml
   - reloader.yaml
+  - grafana-infra.yaml
   - dex.yaml
   - oauth2-proxy.yaml
   - headlamp.yaml

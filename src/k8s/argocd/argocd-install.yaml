@@ -21,6 +21,15 @@ spec:
       namespace: argocd
       jsonPointers:
         - /data
+    - group: external-secrets.io
+      kind: ExternalSecret
+      name: dex-argocd-client-secret
+      namespace: argocd
+      jqPathExpressions:
+        - .spec.data[].remoteRef.conversionStrategy
+        - .spec.data[].remoteRef.decodingStrategy
+        - .spec.data[].remoteRef.metadataPolicy
+        - .spec.data[].remoteRef.nullBytePolicy
   syncPolicy:
     automated:
       prune: true

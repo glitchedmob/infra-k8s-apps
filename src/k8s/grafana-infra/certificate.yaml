@@ -3,6 +3,8 @@ kind: Certificate
 metadata:
   name: grafana-tls
   namespace: monitoring
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   secretName: grafana-tls
   duration: 8760h
