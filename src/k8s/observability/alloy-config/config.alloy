@@ -37,10 +37,7 @@ discovery.relabel "pod_metadata" {
 }
 
 loki.process "parse_logs" {
-	stage.cri { }
-
 	stage.json {
-		source      = "content"
 		expressions = {
 			level   = "level",
 			service = "service",
@@ -58,9 +55,13 @@ loki.process "parse_logs" {
 		selector = "{namespace=\"kube-system\", container=\"traefik\"}"
 
 		stage.regex {
-			source             = "content"
-			expression         = "\"DownstreamStatus\":(?P<status_class>[2345])\\d{2}"
-			labels_from_groups = true
+			expression = `"DownstreamStatus":(?P<status_class>[2345])\d{2}`
+		}
+
+		stage.labels {
+			values = {
+				status_class = "",
+			}
 		}
 	}
 
@@ -68,8 +69,8 @@ loki.process "parse_logs" {
 		selector = "{namespace=\"monitoring\", container=\"nginx\"}"
 
 		stage.regex {
-			source             = "content"
-			expression         = "\\]\\s+(?P<status_class>[2345])\\d{2}\\s+\""
+			expression = `\]\s+(?P<status_class>[2345])\d{2}\s+"`
+
 			labels_from_groups = true
 		}
 	}
@@ -78,8 +79,8 @@ loki.process "parse_logs" {
 		selector = "{namespace=\"oauth2-proxy\", container=\"oauth2-proxy\"}"
 
 		stage.regex {
-			source             = "content"
-			expression         = "\"\\s+(?P<status_class>[2345])\\d{2}\\s+\\d+\\s+[\\d.]+$"
+			expression = `"\s+(?P<status_class>[2345])\d{2}\s+\d+\s+[\d.]+$`
+
 			labels_from_groups = true
 		}
 	}
@@ -97,7 +98,6 @@ loki.process "parse_logs" {
 		selector = "{namespace=\"openbao\"}"
 
 		stage.json {
-			source      = "content"
 			expressions = {
 				bao_level = "\"@level\"",
 			}
@@ -148,10 +148,6 @@ loki.process "parse_logs" {
 				level = "fatal",
 			}
 		}
-	}
-
-	stage.output {
-		source = "content"
 	}
 
 	forward_to = [loki.write.loki.receiver]
