@@ -86,6 +86,16 @@ loki.process "parse_logs" {
 	}
 
 	stage.match {
+		selector = "{namespace=\"monitoring\", container=\"grafana\"}"
+
+		stage.regex {
+			expression = `\bstatus=(?P<status_class>[2345])\d{2}\b`
+
+			labels_from_groups = true
+		}
+	}
+
+	stage.match {
 		selector = "{status_class=~\"2|3\"}"
 
 		stage.sampling {
