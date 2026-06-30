@@ -151,6 +151,10 @@ spec:
               cpu: 200m
               memory: 256Mi
 
+        configReloader:
+          customArgs:
+            - --watched-dir=/etc/alloy
+            - --reload-url=http://localhost:12345/api/v1/restart
         controller:
           tolerations:
             - operator: Exists
