@@ -55,6 +55,45 @@ loki.process "parse_logs" {
 	}
 
 	stage.match {
+		selector = "{namespace=\"kube-system\", container=\"traefik\"}"
+
+		stage.regex {
+			source             = "content"
+			expression         = "\"DownstreamStatus\":(?P<status_class>[2345])\\d{2}"
+			labels_from_groups = true
+		}
+	}
+
+	stage.match {
+		selector = "{namespace=\"monitoring\", container=\"nginx\"}"
+
+		stage.regex {
+			source             = "content"
+			expression         = "\\]\\s+(?P<status_class>[2345])\\d{2}\\s+\""
+			labels_from_groups = true
+		}
+	}
+
+	stage.match {
+		selector = "{namespace=\"oauth2-proxy\", container=\"oauth2-proxy\"}"
+
+		stage.regex {
+			source             = "content"
+			expression         = "\"\\s+(?P<status_class>[2345])\\d{2}\\s+\\d+\\s+[\\d.]+$"
+			labels_from_groups = true
+		}
+	}
+
+	stage.match {
+		selector = "{status_class=~\"2|3\"}"
+
+		stage.sampling {
+			rate                = 0.1
+			drop_counter_reason = "access_log_2xx_3xx_sampled"
+		}
+	}
+
+	stage.match {
 		selector = "{namespace=\"openbao\"}"
 
 		stage.json {
