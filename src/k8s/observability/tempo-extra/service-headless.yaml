@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo-headless
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: tempo
+    app.kubernetes.io/name: tempo
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: memberlist-tcp
+      port: 7946
+      protocol: TCP
+    - name: memberlist-udp
+      port: 7946
+      protocol: UDP
+  selector:
+    app.kubernetes.io/instance: tempo
+    app.kubernetes.io/name: tempo

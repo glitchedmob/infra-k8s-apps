@@ -7,66 +7,141 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
   project: default
-  source:
-    chart: tempo
-    repoURL: https://grafana-community.github.io/helm-charts
-    targetRevision: 2.2.*
-    helm:
-      values: |
-        replicas: 3
-        tempo:
-          receivers:
-            otlp:
-              protocols:
-                grpc:
-                  endpoint: 0.0.0.0:4317
-                http:
-                  endpoint: 0.0.0.0:4318
-          reportingEnabled: false
-          retention: 168h
-          ingester:
-            max_block_duration: 5m
-          metricsGenerator:
-            enabled: true
-            remoteWriteUrl: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
-            processor:
-              local_blocks:
-                filter_server_spans: false
+  sources:
+    - chart: tempo
+      repoURL: https://grafana-community.github.io/helm-charts
+      targetRevision: 2.2.*
+      helm:
+        values: |
+          replicas: 3
+          tempo:
+            receivers:
+              otlp:
+                protocols:
+                  grpc:
+                    endpoint: 0.0.0.0:4317
+                  http:
+                    endpoint: 0.0.0.0:4318
+            reportingEnabled: false
+            retention: 168h
+            livenessProbe:
+              initialDelaySeconds: 60
+              failureThreshold: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+            readinessProbe:
+              initialDelaySeconds: 30
+              failureThreshold: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+            ingester:
+              max_block_duration: 5m
+            metricsGenerator:
+              enabled: true
+              remoteWriteUrl: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+              processor:
+                local_blocks:
+                  filter_server_spans: false
+              storage:
+                path: "/var/tempo/generator/wal"
+              traces_storage:
+                path: "/var/tempo/generator/traces"
+            overrides:
+              defaults:
+                metrics_generator:
+                  processors:
+                    - local-blocks
             storage:
-              path: "/var/tempo/generator/wal"
-            traces_storage:
-              path: "/var/tempo/generator/traces"
-          overrides:
-            defaults:
+              trace:
+                backend: s3
+                block:
+                  version: vParquet5
+                s3:
+                  bucket: tempo-traces
+                  endpoint: seaweedfs-s3.seaweedfs.svc.cluster.local:8333
+                  region: us-east-1
+                  insecure: true
+                  forcepathstyle: true
+                wal:
+                  path: /var/tempo/wal
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 300m
+                memory: 512Mi
+            extraEnvFrom:
+              - secretRef:
+                  name: seaweedfs-s3-observability
+          persistence:
+            enabled: true
+            size: 5Gi
+          config: |
+              stream_over_http_enabled: {{ .Values.tempo.streamOverHttpEnabled }}
+              memberlist:
+                cluster_label: "{{ .Release.Name }}.{{ .Release.Namespace }}"
+                join_members:
+                  - tempo-headless.monitoring.svc.cluster.local:7946
+              multitenancy_enabled: {{ .Values.tempo.multitenancyEnabled }}
+              usage_report:
+                reporting_enabled: {{ .Values.tempo.reportingEnabled }}
+              compactor:
+                compaction:
+                  block_retention: {{ .Values.tempo.retention }}
+                ring:
+                  kvstore:
+                    store: memberlist
+              distributor:
+                receivers:
+                  {{- toYaml .Values.tempo.receivers | nindent 8 }}
+              ingester:
+                {{- toYaml .Values.tempo.ingester | nindent 6 }}
+              server:
+                {{- toYaml .Values.tempo.server | nindent 6 }}
+              storage:
+                {{- toYaml .Values.tempo.storage | nindent 6 }}
+              querier:
+                {{- toYaml .Values.tempo.querier | nindent 6 }}
+              query_frontend:
+                {{- toYaml .Values.tempo.queryFrontend | nindent 6 }}
+              live_store:
+                ring:
+                  kvstore:
+                    store: memberlist
+                partition_ring:
+                  kvstore:
+                    store: memberlist
+              overrides:
+                {{- toYaml .Values.tempo.overrides | nindent 6 }}
+              {{- if .Values.tempo.metricsGenerator.enabled }}
               metrics_generator:
-                processors:
-                  - local-blocks
-          storage:
-            trace:
-              backend: s3
-              block:
-                version: vParquet5
-              s3:
-                bucket: tempo-traces
-                endpoint: seaweedfs-s3.seaweedfs.svc.cluster.local:8333
-                region: us-east-1
-                insecure: true
-                forcepathstyle: true
-              wal:
-                path: /var/tempo/wal
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 300m
-              memory: 512Mi
-          extraEnvFrom:
-            - secretRef:
-                name: seaweedfs-s3-observability
-        persistence:
-          enabled: true
-          size: 5Gi
+                ring:
+                  kvstore:
+                    store: memberlist
+                {{- if .Values.tempo.metricsGenerator.processor }}
+                processor:
+                  {{- toYaml .Values.tempo.metricsGenerator.processor | nindent 8 }}
+                {{- end }}
+                {{- if .Values.tempo.metricsGenerator.registry }}
+                registry:
+                  {{- toYaml .Values.tempo.metricsGenerator.registry | nindent 8 }}
+                {{- end }}
+                storage:
+                  path: {{ .Values.tempo.metricsGenerator.storage.path | quote }}
+                  {{- if .Values.tempo.metricsGenerator.storage.remote_write }}
+                  remote_write:
+                    {{- toYaml .Values.tempo.metricsGenerator.storage.remote_write | nindent 10 }}
+                  {{- else }}
+                  remote_write:
+                    - url: {{ .Values.tempo.metricsGenerator.remoteWriteUrl }}
+                  {{- end }}
+                traces_storage:
+                  path: {{ .Values.tempo.metricsGenerator.traces_storage.path | quote }}
+                {{- end }}
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/observability/tempo-extra
+      targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
