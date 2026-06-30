@@ -18,6 +18,8 @@ spec:
         persistence:
           defaultClass: false
           defaultClassReplicaCount: 3
+        csi:
+          snapshotterReplicaCount: "0"
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
