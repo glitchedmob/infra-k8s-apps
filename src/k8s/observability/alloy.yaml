@@ -7,41 +7,44 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
-  source:
-    chart: alloy
-    repoURL: https://grafana.github.io/helm-charts
-    targetRevision: 1.*
-    helm:
-      values: |
-        alloy:
-          clustering:
+  sources:
+    - chart: alloy
+      repoURL: https://grafana.github.io/helm-charts
+      targetRevision: 1.10.x
+      helm:
+        values: |
+          alloy:
+            clustering:
+              enabled: true
+            enableReporting: false
+            configMap:
+              create: false
+              name: alloy-config
+              key: config.alloy
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
+
+          configReloader:
+            customArgs:
+              - --watched-dir=/etc/alloy
+              - --reload-url=http://localhost:12345/api/v1/restart
+
+          controller:
+            tolerations:
+              - operator: Exists
+
+          serviceMonitor:
             enabled: true
-          enableReporting: false
-          configMap:
-            create: false
-            name: alloy-config
-            key: config.alloy
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
-
-        configReloader:
-          customArgs:
-            - --watched-dir=/etc/alloy
-            - --reload-url=http://localhost:12345/api/v1/restart
-
-        controller:
-          tolerations:
-            - operator: Exists
-
-        serviceMonitor:
-          enabled: true
-          additionalLabels:
-            release: kube-prometheus-stack
+            additionalLabels:
+              release: kube-prometheus-stack
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/observability/alloy-config
+      targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
