@@ -22,3 +22,9 @@ spec:
     providers:
       kubernetesCRD:
         allowCrossNamespace: true
+    logs:
+      general:
+        format: json
+      access:
+        enabled: true
+        format: json

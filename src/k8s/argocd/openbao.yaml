@@ -115,6 +115,7 @@ spec:
                     memory: 128Mi
             extraEnvironmentVars:
               SSL_CERT_DIR: /etc/ssl/certs
+              BAO_LOG_FORMAT: json
             resources:
               requests:
                 cpu: 100m

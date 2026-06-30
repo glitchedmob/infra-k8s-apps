@@ -71,6 +71,57 @@ spec:
                   }
                 }
 
+                stage.match {
+                  selector = "{namespace=\"openbao\"}"
+                  stage.json {
+                    source = "content"
+                    expressions = {
+                      bao_level = "@level",
+                    }
+                  }
+                  stage.labels {
+                    values = {
+                      level = "bao_level",
+                    }
+                  }
+                }
+
+                stage.match {
+                  selector = "{namespace=\"seaweedfs\"}|~\"^I[0-9]{4} \""
+                  stage.static_labels {
+                    values = {
+                      level = "info",
+                    }
+                  }
+                }
+
+                stage.match {
+                  selector = "{namespace=\"seaweedfs\"}|~\"^W[0-9]{4} \""
+                  stage.static_labels {
+                    values = {
+                      level = "warn",
+                    }
+                  }
+                }
+
+                stage.match {
+                  selector = "{namespace=\"seaweedfs\"}|~\"^E[0-9]{4} \""
+                  stage.static_labels {
+                    values = {
+                      level = "error",
+                    }
+                  }
+                }
+
+                stage.match {
+                  selector = "{namespace=\"seaweedfs\"}|~\"^F[0-9]{4} \""
+                  stage.static_labels {
+                    values = {
+                      level = "fatal",
+                    }
+                  }
+                }
+
                 stage.output {
                   source = "content"
                 }
