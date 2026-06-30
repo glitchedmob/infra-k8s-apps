@@ -13,7 +13,32 @@ spec:
     limits:
       cpu: 500m
       memory: 512Mi
+  volumes:
+    - name: queue-storage
+      hostPath:
+        path: /var/lib/otelcol/queue
+        type: DirectoryOrCreate
+  volumeMounts:
+    - name: queue-storage
+      mountPath: /var/lib/otelcol/queue
+  initContainers:
+    - name: init-fs
+      image: busybox:latest
+      command:
+        - sh
+        - -c
+        - chown -R 10001:10001 /var/lib/otelcol/queue
+      volumeMounts:
+        - name: queue-storage
+          mountPath: /var/lib/otelcol/queue
+      securityContext:
+        runAsUser: 0
+      resources: {}
   config:
+    extensions:
+      file_storage/queue:
+        directory: /var/lib/otelcol/queue
+
     receivers:
       otlp:
         protocols:
@@ -36,12 +61,21 @@ spec:
         endpoint: tempo.monitoring.svc.cluster.local:4317
         tls:
           insecure: true
+        sending_queue:
+          storage: file_storage/queue
+          queue_size: 10000
+        retry_on_failure:
+          enabled: true
+          initial_interval: 1s
+          max_interval: 10s
+          max_elapsed_time: 300s
       otlphttp/loki:
         endpoint: http://loki-gateway.monitoring.svc.cluster.local:80/otlp
       prometheusremotewrite:
         endpoint: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write
 
     service:
+      extensions: [file_storage/queue]
       pipelines:
         traces:
           receivers: [otlp]
