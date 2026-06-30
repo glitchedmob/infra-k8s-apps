@@ -18,6 +18,7 @@ spec:
           csi:
             enabled: false
           server:
+            updateStrategyType: RollingUpdate
             ha:
               enabled: true
               replicas: 3
