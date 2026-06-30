@@ -4,8 +4,7 @@ metadata:
   name: otelcol
   namespace: monitoring
 spec:
-  mode: deployment
-  replicas: 2
+  mode: daemonset
   image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.153.0
   resources:
     requests:
