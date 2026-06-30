@@ -89,6 +89,30 @@ spec:
           grafana:
             enabled: true
             replicas: 2
+            dashboardProviders:
+              dashboardproviders.yaml:
+                apiVersion: 1
+                providers:
+                  - name: 'default'
+                    orgId: 1
+                    folder: ''
+                    type: file
+                    disableDeletion: false
+                    allowUiUpdates: false
+                    updateIntervalSeconds: 30
+                    options:
+                      foldersFromFilesStructure: false
+                      path: /var/lib/grafana/dashboards/default
+            dashboards:
+              default:
+                proxmox-ve:
+                  gnetId: 23855
+                  revision: 1
+                  datasource:
+                    - name: DS_PROMETHEUS
+                      value: prometheus
+                    - name: dsProxmox
+                      value: prometheus
             podAnnotations:
               reloader.stakater.com/auto: "true"
             podDisruptionBudget:
