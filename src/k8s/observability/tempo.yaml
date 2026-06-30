@@ -26,6 +26,21 @@ spec:
           retention: 168h
           ingester:
             max_block_duration: 5m
+          metricsGenerator:
+            enabled: true
+            remoteWriteUrl: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+            processor:
+              local_blocks:
+                filter_server_spans: false
+            storage:
+              path: "/var/tempo/generator/wal"
+            traces_storage:
+              path: "/var/tempo/generator/traces"
+          overrides:
+            defaults:
+              metrics_generator:
+                processors:
+                  - local-blocks
           storage:
             trace:
               backend: s3
