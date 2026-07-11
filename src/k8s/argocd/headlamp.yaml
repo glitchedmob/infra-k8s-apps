@@ -50,7 +50,7 @@ spec:
             enabled: false
           pluginsManager:
             enabled: true
-            baseImage: node:lts
+            baseImage: node:26.4.0
             configContent: |
               plugins:
                 - name: cert-manager
