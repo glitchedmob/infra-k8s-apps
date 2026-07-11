@@ -25,6 +25,9 @@ spec:
             - --objstore.config-file=/etc/thanos/objstore.yaml
             - --http-address=0.0.0.0:10902
             - --retention.resolution-raw=168h
+            - --delete-delay=0s
+            - --deduplication.replica-label=prometheus_replica
+            - --deduplication.func=penalty
             - --downsampling.disable
             - --wait
             - --wait-interval=5m
@@ -47,10 +50,10 @@ spec:
           resources:
             requests:
               cpu: 50m
-              memory: 128Mi
+              memory: 512Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 4Gi
           volumeMounts:
             - name: data
               mountPath: /var/thanos/compactor
@@ -61,7 +64,7 @@ spec:
       volumes:
         - name: data
           emptyDir:
-            sizeLimit: 2Gi
+            sizeLimit: 10Gi
         - name: objstore-config
           secret:
             secretName: thanos-objstore-config

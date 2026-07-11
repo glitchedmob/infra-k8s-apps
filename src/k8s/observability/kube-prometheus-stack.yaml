@@ -23,7 +23,7 @@ spec:
             serviceMonitor:
               metricRelabelings:
                 - sourceLabels: [__name__]
-                  regex: 'apiserver_(request_body_size_bytes|response_sizes|watch_events_sizes|watch_list_duration_seconds|watch_cache_read_wait_seconds).*|etcd_request_duration_seconds.*'
+                  regex: 'apiserver_(request_body_size_bytes|response_sizes|watch_events_sizes|watch_list_duration_seconds|watch_cache_read_wait_seconds|request_duration_seconds|request_sli_duration_seconds).*|etcd_request_duration_seconds.*'
                   action: drop
 
           kubeStateMetrics:
