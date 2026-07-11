@@ -10,7 +10,7 @@ spec:
   source:
     chart: trust-manager
     repoURL: https://charts.jetstack.io
-    targetRevision: 0.23.*
+    targetRevision: 0.24.*
     helm:
       values: |
         crds:
