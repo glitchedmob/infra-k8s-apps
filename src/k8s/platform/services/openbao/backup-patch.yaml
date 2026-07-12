@@ -16,7 +16,10 @@
       jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token);
       BAO_TOKEN=$(bao write -field=token auth/kubernetes/login role=raft-backup jwt="$jwt");
       export BAO_TOKEN;
-      exec bao operator raft snapshot save -
+      snapshot=$(mktemp);
+      trap "rm -f $snapshot" EXIT;
+      bao operator raft snapshot save "$snapshot" >/dev/null;
+      cat "$snapshot"
     '
 - op: replace
   path: /spec/pod/spec/serviceAccountName
