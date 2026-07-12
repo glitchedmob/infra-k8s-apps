@@ -75,6 +75,8 @@ spec:
               retention: 6h
               retentionSize: 15GB
               disableCompaction: true
+              tsdb:
+                outOfOrderTimeWindow: 30s
               storageSpec:
                 volumeClaimTemplate:
                   spec:
