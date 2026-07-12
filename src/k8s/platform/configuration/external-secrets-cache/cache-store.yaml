@@ -13,7 +13,5 @@ spec:
           name: kube-root-ca.crt
           key: ca.crt
       auth:
-        token:
-          bearerToken:
-            name: eso-cache-reader-token
-            key: token
+        serviceAccount:
+          name: eso-cache-reader

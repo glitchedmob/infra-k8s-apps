@@ -13,11 +13,9 @@ spec:
           key: ca.crt
           namespace: external-secrets
       auth:
-        token:
-          bearerToken:
-            name: eso-argocd-reader-token
-            namespace: external-secrets
-            key: token
+        serviceAccount:
+          name: eso-argocd-reader
+          namespace: external-secrets
   conditions:
     - namespaces:
         - argocd
@@ -37,11 +35,9 @@ spec:
           key: ca.crt
           namespace: external-secrets
       auth:
-        token:
-          bearerToken:
-            name: eso-grafana-reader-token
-            namespace: external-secrets
-            key: token
+        serviceAccount:
+          name: eso-grafana-reader
+          namespace: external-secrets
   conditions:
     - namespaces:
         - observability
@@ -61,11 +57,9 @@ spec:
           key: ca.crt
           namespace: external-secrets
       auth:
-        token:
-          bearerToken:
-            name: eso-oauth2-proxy-reader-token
-            namespace: external-secrets
-            key: token
+        serviceAccount:
+          name: eso-oauth2-proxy-reader
+          namespace: external-secrets
   conditions:
     - namespaces:
         - oauth2-proxy
@@ -85,11 +79,9 @@ spec:
           key: ca.crt
           namespace: external-secrets
       auth:
-        token:
-          bearerToken:
-            name: eso-dex-reader-token
-            namespace: external-secrets
-            key: token
+        serviceAccount:
+          name: eso-dex-reader
+          namespace: external-secrets
   conditions:
     - namespaces:
         - dex
