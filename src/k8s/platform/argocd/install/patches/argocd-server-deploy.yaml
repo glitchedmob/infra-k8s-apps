@@ -22,3 +22,4 @@ spec:
         - name: levizitting-ca-bundle
           configMap:
             name: levizitting-ca-bundle
+            optional: true

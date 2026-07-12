@@ -10,7 +10,7 @@ spec:
   sources:
     - chart: openbao
       repoURL: https://openbao.github.io/openbao-helm
-      targetRevision: 0.28.*
+      targetRevision: 0.28.4
       helm:
         values: |
           injector:

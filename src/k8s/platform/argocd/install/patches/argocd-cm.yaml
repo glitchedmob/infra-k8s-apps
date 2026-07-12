@@ -24,7 +24,7 @@ data:
     end
     return hs
   url: https://argocd.levizitting.com
-  admin.enabled: "true"
+  admin.enabled: "false"
   oidc.config: |
     name: Dex
     issuer: https://sso.levizitting.com
