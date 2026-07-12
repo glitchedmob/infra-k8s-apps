@@ -12,7 +12,7 @@ resources:
   - loki.yaml
   - longhorn-ingress.yaml
   - oauth2-proxy.yaml
-  - openbao.yaml
+  - openbao
   - otel-collector.yaml
   - seaweedfs-db.yaml
   - seaweedfs-filer-ingress.yaml
