@@ -31,12 +31,3 @@ subjects:
   - kind: ServiceAccount
     name: eso-cache-reader
     namespace: external-secrets
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: eso-cache-reader-token
-  namespace: external-secrets
-  annotations:
-    kubernetes.io/service-account.name: eso-cache-reader
-type: kubernetes.io/service-account-token

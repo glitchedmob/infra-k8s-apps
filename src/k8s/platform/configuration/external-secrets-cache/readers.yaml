@@ -33,15 +33,6 @@ subjects:
     namespace: external-secrets
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: eso-argocd-reader-token
-  namespace: external-secrets
-  annotations:
-    kubernetes.io/service-account.name: eso-argocd-reader
-type: kubernetes.io/service-account-token
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: eso-grafana-reader
@@ -74,15 +65,6 @@ subjects:
   - kind: ServiceAccount
     name: eso-grafana-reader
     namespace: external-secrets
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: eso-grafana-reader-token
-  namespace: external-secrets
-  annotations:
-    kubernetes.io/service-account.name: eso-grafana-reader
-type: kubernetes.io/service-account-token
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -119,15 +101,6 @@ subjects:
     namespace: external-secrets
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: eso-oauth2-proxy-reader-token
-  namespace: external-secrets
-  annotations:
-    kubernetes.io/service-account.name: eso-oauth2-proxy-reader
-type: kubernetes.io/service-account-token
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: eso-dex-reader
@@ -160,12 +133,3 @@ subjects:
   - kind: ServiceAccount
     name: eso-dex-reader
     namespace: external-secrets
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: eso-dex-reader-token
-  namespace: external-secrets
-  annotations:
-    kubernetes.io/service-account.name: eso-dex-reader
-type: kubernetes.io/service-account-token
