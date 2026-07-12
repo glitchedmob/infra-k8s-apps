@@ -16,6 +16,20 @@ spec:
           podAnnotations:
             reloader.stakater.com/auto: "true"
 
+          replicaCount: 2
+
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: oauth2-proxy
+
           config:
             existingSecret: oauth2-proxy
 
