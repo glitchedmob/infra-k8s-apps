@@ -38,7 +38,7 @@ spec:
             additionalLabels:
               release: kube-prometheus-stack
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-      path: src/k8s/observability/alloy-config
+      path: src/k8s/platform/observability/alloy-config
       targetRevision: main
   destination:
     server: https://kubernetes.default.svc

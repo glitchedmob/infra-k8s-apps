@@ -54,7 +54,7 @@ spec:
               cpu: 200m
               memory: 128Mi
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-      path: src/k8s/oauth2-proxy
+      path: src/k8s/platform/identity/oauth2-proxy
       targetRevision: main
   destination:
     server: https://kubernetes.default.svc

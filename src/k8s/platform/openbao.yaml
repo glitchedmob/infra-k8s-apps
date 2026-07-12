@@ -125,7 +125,7 @@ spec:
                 cpu: 500m
                 memory: 512Mi
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-      path: src/k8s/openbao
+      path: src/k8s/platform/services/openbao
       targetRevision: main
   destination:
     server: https://kubernetes.default.svc

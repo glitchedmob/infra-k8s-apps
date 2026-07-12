@@ -84,7 +84,7 @@ spec:
                 - name: tempo-traces
                 - name: thanos-metrics
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-      path: src/k8s/storage/seaweedfs-resources
+      path: src/k8s/platform/storage/seaweedfs-resources
       targetRevision: main
   destination:
     server: https://kubernetes.default.svc

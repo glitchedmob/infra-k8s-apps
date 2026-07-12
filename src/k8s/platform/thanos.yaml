@@ -7,7 +7,7 @@ spec:
   project: platform
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-    path: src/k8s/observability/thanos
+    path: src/k8s/platform/observability/thanos
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
