@@ -38,10 +38,22 @@ spec:
               value: ".levizitting.com"
             - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
               value: "true"
-            - name: OAUTH2_PROXY_SSL_INSECURE_SKIP_VERIFY
+            - name: OAUTH2_PROXY_PROVIDER_CA_FILES
+              value: /etc/ssl/levizitting/ca.crt
+            - name: OAUTH2_PROXY_USE_SYSTEM_TRUST_STORE
               value: "true"
             - name: OAUTH2_PROXY_REVERSE_PROXY
               value: "true"
+
+          extraVolumes:
+            - name: levizitting-ca-bundle
+              configMap:
+                name: levizitting-ca-bundle
+
+          extraVolumeMounts:
+            - name: levizitting-ca-bundle
+              mountPath: /etc/ssl/levizitting
+              readOnly: true
 
           ingress:
             enabled: false

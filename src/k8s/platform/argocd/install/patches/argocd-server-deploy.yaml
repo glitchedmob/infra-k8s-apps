@@ -8,3 +8,17 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
         configmap.reloader.stakater.com/reload: "argocd-cm,argocd-cmd-params-cm"
+    spec:
+      containers:
+        - name: argocd-server
+          env:
+            - name: SSL_CERT_DIR
+              value: /etc/ssl/levizitting
+          volumeMounts:
+            - name: levizitting-ca-bundle
+              mountPath: /etc/ssl/levizitting
+              readOnly: true
+      volumes:
+        - name: levizitting-ca-bundle
+          configMap:
+            name: levizitting-ca-bundle
