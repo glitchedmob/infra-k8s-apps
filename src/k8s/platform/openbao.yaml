@@ -19,6 +19,7 @@ spec:
             enabled: false
           server:
             updateStrategyType: RollingUpdate
+            podManagementPolicy: Parallel
             ha:
               enabled: true
               replicas: 3
@@ -62,6 +63,12 @@ spec:
               - name: openbao-seal
                 emptyDir:
                   medium: Memory
+              - name: openbao-recovery-work
+                emptyDir:
+                  medium: Memory
+              - name: openbao-recovery-config
+                configMap:
+                  name: openbao-recovery
             volumeMounts:
               - name: levizitting-ca-bundle
                 mountPath: /etc/ssl/certs/levizitting-ca.crt
@@ -90,6 +97,33 @@ spec:
                       echo "fetch-unseal-key: ERROR expected 44-byte base64 key, got ${key_byte_count}" >&2
                       exit 1
                     fi
+                    if [ "${HOSTNAME##*-}" = 0 ] && [ -z "$(ls -A /openbao/data/raft 2>/dev/null)" ]; then
+                      umask 077
+                      if ! aws ssm get-parameter \
+                          --with-decryption \
+                          --name /vm-workloads/lz/infra-vm-workloads/backups/b2-account-id \
+                          --query Parameter.Value \
+                          --output text \
+                          | tr -d '\n' > /recovery/b2-account-id; then
+                        rm -f /recovery/b2-account-id
+                      fi
+                      if ! aws ssm get-parameter \
+                          --with-decryption \
+                          --name /vm-workloads/lz/infra-vm-workloads/backups/b2-account-key \
+                          --query Parameter.Value \
+                          --output text \
+                          | tr -d '\n' > /recovery/b2-account-key; then
+                        rm -f /recovery/b2-account-key
+                      fi
+                      if ! aws ssm get-parameter \
+                          --with-decryption \
+                          --name /vm-workloads/lz/infra-vm-workloads/backups/openbao/restic-password \
+                          --query Parameter.Value \
+                          --output text \
+                          | tr -d '\n' > /recovery/restic-password; then
+                        rm -f /recovery/restic-password
+                      fi
+                    fi
                     echo "fetch-unseal-key: done"
                 env:
                   - name: AWS_REGION
@@ -107,6 +141,10 @@ spec:
                 volumeMounts:
                   - name: openbao-seal
                     mountPath: /openbao/seals
+                  - name: data
+                    mountPath: /openbao/data
+                  - name: openbao-recovery-work
+                    mountPath: /recovery
                 resources:
                   requests:
                     cpu: 50m
@@ -114,6 +152,95 @@ spec:
                   limits:
                     cpu: 250m
                     memory: 128Mi
+              - name: coordinate-recovery
+                image: ghcr.io/k8up-io/k8up:v2.15.0
+                command: ["/bin/bash", "/recovery-config/coordinate.sh"]
+                env:
+                  - name: HOSTNAME
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.name
+                volumeMounts:
+                  - name: data
+                    mountPath: /openbao/data
+                  - name: openbao-recovery-work
+                    mountPath: /recovery
+                  - name: openbao-recovery-config
+                    mountPath: /recovery-config
+                    readOnly: true
+                resources:
+                  requests:
+                    cpu: 25m
+                    memory: 32Mi
+                  limits:
+                    cpu: 100m
+                    memory: 128Mi
+              - name: fetch-raft-snapshot
+                image: ghcr.io/k8up-io/k8up:v2.15.0
+                command: ["/bin/bash", "-euo", "pipefail", "-c"]
+                args:
+                  - |
+                    if [[ -n "$(ls -A /openbao/data/raft 2>/dev/null)" ]] ||
+                       [[ "${HOSTNAME##*-}" != 0 ]] ||
+                       [[ -f /recovery/join-existing-cluster ]]; then
+                      exit 0
+                    fi
+
+                    export RESTIC_PASSWORD=$(cat /recovery/restic-password)
+                    export B2_ACCOUNT_ID=$(cat /recovery/b2-account-id)
+                    export B2_ACCOUNT_KEY=$(cat /recovery/b2-account-key)
+                    snapshots=$(restic snapshots --json --latest 1 --path /openbao-backup.snap)
+                    snapshot_id=$(jq -er '.[0].id' <<<"${snapshots}")
+                    restic dump "${snapshot_id}" /openbao-backup.snap > /recovery/openbao-backup.snap.tmp
+                    test -s /recovery/openbao-backup.snap.tmp
+                    mv /recovery/openbao-backup.snap.tmp /recovery/openbao-backup.snap
+                env:
+                  - name: HOSTNAME
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.name
+                  - name: RESTIC_REPOSITORY
+                    value: b2:levizitting-on-prem-k3s-backups:openbao
+                volumeMounts:
+                  - name: data
+                    mountPath: /openbao/data
+                  - name: openbao-recovery-work
+                    mountPath: /recovery
+                resources:
+                  requests:
+                    cpu: 25m
+                    memory: 64Mi
+                  limits:
+                    cpu: 250m
+                    memory: 256Mi
+              - name: recover-raft-or-join
+                image: quay.io/openbao/openbao:2.5.5
+                command: ["/bin/sh", "/recovery-config/recover.sh"]
+                env:
+                  - name: HOSTNAME
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: metadata.name
+                  - name: VAULT_CLIENT_TIMEOUT
+                    value: 10m
+                volumeMounts:
+                  - name: data
+                    mountPath: /openbao/data
+                  - name: openbao-seal
+                    mountPath: /openbao/seals
+                    readOnly: true
+                  - name: openbao-recovery-work
+                    mountPath: /recovery
+                  - name: openbao-recovery-config
+                    mountPath: /recovery-config
+                    readOnly: true
+                resources:
+                  requests:
+                    cpu: 50m
+                    memory: 128Mi
+                  limits:
+                    cpu: 500m
+                    memory: 512Mi
             extraEnvironmentVars:
               SSL_CERT_DIR: /etc/ssl/certs
               BAO_LOG_FORMAT: json
@@ -131,6 +258,11 @@ spec:
     server: https://kubernetes.default.svc
     namespace: openbao
   ignoreDifferences:
+    - group: ""
+      kind: ConfigMap
+      name: openbao-recovery-state
+      jsonPointers:
+        - /data
     - group: cert-manager.io
       kind: Certificate
       jsonPointers:
@@ -142,3 +274,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true

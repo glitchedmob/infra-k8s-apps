@@ -34,6 +34,7 @@ spec:
     - https://grafana.github.io/helm-charts
     - https://keiailab.github.io/valkey-operator
     - https://kubernetes-sigs.github.io/headlamp/
+    - https://k8up-io.github.io/k8up
     - https://oauth2-proxy.github.io/manifests
     - https://open-telemetry.github.io/opentelemetry-helm-charts
     - https://openbao.github.io/openbao-helm

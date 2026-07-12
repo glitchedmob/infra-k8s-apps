@@ -15,3 +15,9 @@ Holds the Kubernetes manifests for base infrastructure and applications deployed
 - The edge cluster forwards `*.levizitting.com` traffic to internal LZ k3s nodes.
 - HTTPS is SNI passthrough at the edge, so TLS terminates on the destination workload cluster ingress.
 - This repo defines destination ingresses/services; edge entry and forwarding rules are owned by [`glitchedmob/infra-public-edge`](https://github.com/glitchedmob/infra-public-edge).
+
+## Application backups
+
+- K8up uses `src/k8s/platform/services/backup-base/` for shared Backblaze scheduling and retention.
+- OpenBao uses logical Raft snapshots and a least-privilege Kubernetes auth role managed by `infra-app-config`.
+- On rebuild, OpenBao restores the latest snapshot only when it is uninitialized; otherwise recovery makes no changes.

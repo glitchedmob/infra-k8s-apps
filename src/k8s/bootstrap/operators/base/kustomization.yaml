@@ -4,5 +4,6 @@ resources:
   - cert-manager.yaml
   - cnpg.yaml
   - external-secrets.yaml
+  - k8up.yaml
   - longhorn.yaml
   - prometheus-operator-crds.yaml
