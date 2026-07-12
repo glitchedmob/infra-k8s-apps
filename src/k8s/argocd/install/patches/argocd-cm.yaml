@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
+  application.resourceTrackingMethod: annotation
   url: https://argocd.levizitting.com
   admin.enabled: "true"
   oidc.tls.insecure.skip.verify: "true"

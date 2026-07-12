@@ -10,21 +10,27 @@ spec:
         revision: main
         directories:
           - path: src/k8s/apps/*
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: '{{.path.basename}}'
       annotations:
         argocd.argoproj.io/sync-wave: "2"
     spec:
-      project: default
+      project: apps
       source:
         repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-        path: '{{path}}'
+        path: '{{.path.path}}'
         targetRevision: main
       destination:
-        namespace: '{{path.basename}}'
+        namespace: '{{.path.basename}}'
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+        syncOptions:
+          - FailOnSharedResource=true
+          - PruneLast=true

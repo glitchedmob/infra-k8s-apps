@@ -6,14 +6,14 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-4"
 spec:
-  project: default
+  project: platform
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
     path: src/k8s/grafana-infra
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: observability
   ignoreDifferences:
     - group: cert-manager.io
       kind: Certificate

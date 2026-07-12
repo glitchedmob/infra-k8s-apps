@@ -2,7 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: grafana-db
-  namespace: monitoring
+  namespace: observability
   annotations:
     argocd.argoproj.io/sync-wave: "-4"
 spec:

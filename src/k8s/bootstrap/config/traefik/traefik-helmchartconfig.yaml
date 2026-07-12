@@ -27,7 +27,7 @@ spec:
         enabled: true
         grpc:
           enabled: true
-          endpoint: otelcol-collector.monitoring.svc.cluster.local:4317
+          endpoint: otelcol-collector.observability.svc.cluster.local:4317
           insecure: true
     logs:
       general:

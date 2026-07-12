@@ -6,13 +6,13 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
-  project: default
-  sources:
-    - chart: opentelemetry-operator
-      repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
-      targetRevision: 0.119.*
-      helm:
-        values: |
+  project: platform
+  source:
+    chart: opentelemetry-operator
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 0.119.*
+    helm:
+      values: |
           replicaCount: 2
 
           manager:
@@ -37,12 +37,9 @@ spec:
           pdb:
             create: true
             minAvailable: 1
-    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
-      path: src/k8s/observability/otel-collector
-      targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: observability
   syncPolicy:
     automated:
       prune: true

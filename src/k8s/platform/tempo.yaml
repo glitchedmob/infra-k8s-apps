@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  project: default
+  project: platform
   source:
     chart: tempo
     repoURL: https://grafana-community.github.io/helm-charts
@@ -87,7 +87,7 @@ spec:
             storage:
               path: /var/tempo/generator/wal
               remote_write:
-                - url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/write"
+                - url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/write"
                   send_exemplars: true
             traces_storage:
               path: /var/tempo/generator/traces
@@ -102,7 +102,7 @@ spec:
             reporting_enabled: false
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: observability
   syncPolicy:
     automated:
       prune: true

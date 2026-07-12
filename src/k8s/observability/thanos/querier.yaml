@@ -2,18 +2,18 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: thanos-querier-endpoint-sd
-  namespace: monitoring
+  namespace: observability
 data:
   endpoints.yaml: |
     endpoints:
-      - address: dnssrv+_grpc._tcp.kube-prometheus-stack-thanos-discovery.monitoring.svc.cluster.local
-      - address: dnssrv+_grpc._tcp.thanos-store-headless.monitoring.svc.cluster.local
+      - address: dnssrv+_grpc._tcp.kube-prometheus-stack-thanos-discovery.observability.svc.cluster.local
+      - address: dnssrv+_grpc._tcp.thanos-store-headless.observability.svc.cluster.local
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thanos-querier
-  namespace: monitoring
+  namespace: observability
   labels:
     app.kubernetes.io/name: thanos-querier
 spec:
@@ -85,7 +85,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: thanos-querier
-  namespace: monitoring
+  namespace: observability
   labels:
     app.kubernetes.io/name: thanos-querier
 spec:
@@ -106,7 +106,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: thanos-querier
-  namespace: monitoring
+  namespace: observability
   labels:
     release: kube-prometheus-stack
 spec:

@@ -44,7 +44,7 @@ spec:
             key: token
   conditions:
     - namespaces:
-        - monitoring
+        - observability
 ---
 apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore

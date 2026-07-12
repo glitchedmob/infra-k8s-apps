@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
 spec:
-  project: default
+  project: platform
   source:
     repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
     path: src/k8s/storage/seaweedfs-filer-ingress

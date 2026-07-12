@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  project: default
+  project: platform
   sources:
     - chart: alloy
       repoURL: https://grafana.github.io/helm-charts
@@ -42,7 +42,7 @@ spec:
       targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: observability
   syncPolicy:
     automated:
       prune: true

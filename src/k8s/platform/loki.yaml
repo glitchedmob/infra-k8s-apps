@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
-  project: default
+  project: platform
   source:
     chart: loki
     repoURL: https://grafana-community.github.io/helm-charts
@@ -97,7 +97,7 @@ spec:
             service: loki-canary
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: observability
   syncPolicy:
     automated:
       prune: true

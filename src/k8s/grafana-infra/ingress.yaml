@@ -2,11 +2,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: grafana
-  namespace: monitoring
+  namespace: observability
   annotations:
     argocd.argoproj.io/sync-wave: "3"
     cert-manager.io/cluster-issuer: levizitting-ca
-    traefik.ingress.kubernetes.io/router.middlewares: monitoring-grafana-https-redirect@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: observability-grafana-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
