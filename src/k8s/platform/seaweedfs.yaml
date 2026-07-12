@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+    infra.levizitting.com/health-gate: "true"
 spec:
   project: platform
   sources:

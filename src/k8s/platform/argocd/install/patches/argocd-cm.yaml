@@ -4,6 +4,25 @@ metadata:
   name: argocd-cm
 data:
   application.resourceTrackingMethod: annotation
+  resource.customizations.health.argoproj.io_Application: |
+    hs = {}
+    hs.status = "Healthy"
+    hs.message = "Health gate disabled"
+    if obj.metadata.annotations ~= nil and
+       obj.metadata.annotations["infra.levizitting.com/health-gate"] == "true" then
+      hs.status = "Progressing"
+      hs.message = "Waiting for child application"
+      if obj.status ~= nil and
+         obj.status.sync ~= nil and
+         obj.status.sync.status == "Synced" and
+         obj.status.health ~= nil then
+        hs.status = obj.status.health.status
+        if obj.status.health.message ~= nil then
+          hs.message = obj.status.health.message
+        end
+      end
+    end
+    return hs
   url: https://argocd.levizitting.com
   admin.enabled: "true"
   oidc.tls.insecure.skip.verify: "true"

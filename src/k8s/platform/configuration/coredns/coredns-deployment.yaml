@@ -3,5 +3,11 @@ kind: Deployment
 metadata:
   name: coredns
   namespace: kube-system
+  annotations:
+    configmap.reloader.stakater.com/reload: coredns-custom
 spec:
   replicas: 3
+  template:
+    metadata:
+      annotations:
+        infra.levizitting.com/coredns-custom: enabled
