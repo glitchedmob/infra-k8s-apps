@@ -18,6 +18,8 @@ spec:
         persistence:
           defaultClass: false
           defaultClassReplicaCount: 3
+        defaultSettings:
+          defaultDataPath: /mnt/k8s-data/longhorn
         csi:
           snapshotterReplicaCount: "0"
   destination:
