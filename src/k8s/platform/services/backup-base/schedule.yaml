@@ -18,6 +18,8 @@ spec:
         key: account-key
   backup:
     schedule: '0 8 * * *'
+    clusterName: lz
+    promURL: http://prometheus-pushgateway.observability.svc.cluster.local:9091
     failedJobsHistoryLimit: 2
     successfulJobsHistoryLimit: 2
     labelSelectors:
