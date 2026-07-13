@@ -105,6 +105,8 @@ server:
               fieldPath: metadata.name
         - name: RESTIC_REPOSITORY
           value: b2:levizitting-on-prem-k3s-backups:openbao
+        - name: RESTIC_CACHE_DIR
+          value: /tmp/restic-cache
       volumeMounts:
         - name: data
           mountPath: /openbao/data
