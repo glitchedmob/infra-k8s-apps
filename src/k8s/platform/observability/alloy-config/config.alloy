@@ -41,6 +41,12 @@ discovery.relabel "pod_metadata" {
 	}
 
 	rule {
+		source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+		target_label  = "service"
+		regex         = "(.+)"
+	}
+
+	rule {
 		source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
 		separator     = "/"
 		target_label  = "__path__"
