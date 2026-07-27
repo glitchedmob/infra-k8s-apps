@@ -20,4 +20,5 @@ Holds the Kubernetes manifests for base infrastructure and applications deployed
 
 - K8up uses `src/k8s/platform/services/backup-base/` for shared Backblaze scheduling and retention.
 - OpenBao uses logical Raft snapshots and a least-privilege Kubernetes auth role managed by `infra-app-config`.
-- On rebuild, OpenBao restores the latest snapshot only when it is uninitialized; otherwise recovery makes no changes.
+- OpenBao restores the latest snapshot only when all three current PVCs are empty; otherwise recovery makes no changes.
+- A newly initialized or successfully queried repository with no snapshots permits first-time initialization. Missing credentials, invalid credentials, existing-repository password errors, and network errors fail closed.
