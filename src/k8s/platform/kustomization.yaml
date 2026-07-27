@@ -4,6 +4,7 @@ resources:
   - alloy.yaml
   - argocd-ingress.yaml
   - argocd-install.yaml
+  - authentik
   - bootstrap-config.yaml
   - dex.yaml
   - grafana-infra.yaml

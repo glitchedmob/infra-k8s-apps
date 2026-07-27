@@ -1,0 +1,9 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: authentik-https-redirect
+  namespace: authentik
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

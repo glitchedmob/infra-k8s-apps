@@ -1,0 +1,93 @@
+global:
+  deploymentAnnotations:
+    secret.reloader.stakater.com/reload: authentik-runtime,authentik-db-app
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-runtime
+          key: secretKey
+    - name: AUTHENTIK_POSTGRESQL__USER
+      valueFrom:
+        secretKeyRef:
+          name: authentik-db-app
+          key: username
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-db-app
+          key: password
+    - name: AUTHENTIK_EMAIL__USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: authentik-runtime
+          key: smtpUsername
+    - name: AUTHENTIK_EMAIL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-runtime
+          key: smtpPassword
+  affinity:
+    podAntiAffinity: hard
+
+authentik:
+  error_reporting:
+    enabled: false
+  email:
+    host: email-smtp.us-east-2.amazonaws.com
+    port: 587
+    use_tls: true
+    from: id@levizitting.com
+  postgresql:
+    host: authentik-db-rw.authentik.svc.cluster.local
+    name: authentik
+    sslmode: require
+
+server:
+  replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+
+worker:
+  replicas: 2
+  env:
+    - name: AUTHENTIK_BOOTSTRAP_EMAIL
+      value: devops@levizitting.com
+    - name: AUTHENTIK_BOOTSTRAP_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: authentik-runtime
+          key: bootstrapToken
+  pdb:
+    enabled: true
+    minAvailable: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+
+postgresql:
+  enabled: false

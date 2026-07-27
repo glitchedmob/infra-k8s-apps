@@ -27,6 +27,7 @@ spec:
     - ssh://git@github.com/glitchedmob/infra-k8s-apps.git
     - https://charts.dexidp.io
     - https://charts.external-secrets.io
+    - https://charts.goauthentik.io
     - https://charts.jetstack.io
     - https://charts.longhorn.io
     - https://cloudnative-pg.github.io/charts
