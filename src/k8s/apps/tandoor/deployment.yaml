@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tandoor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tandoor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: tandoor
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      containers:
+        - name: tandoor
+          image: vabene1111/recipes:2.6.10
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          envFrom:
+            - secretRef:
+                name: tandoor-runtime
+            - secretRef:
+                name: tandoor-s3-credentials
+          env:
+            - name: ALLOWED_HOSTS
+              value: tandoor.levizitting.com
+            - name: CSRF_TRUSTED_ORIGINS
+              value: https://tandoor.levizitting.com
+            - name: DB_ENGINE
+              value: django.db.backends.postgresql
+            - name: POSTGRES_HOST
+              value: tandoor-db-rw
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: tandoor-db-app
+                  key: dbname
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: tandoor-db-app
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tandoor-db-app
+                  key: password
+            - name: DB_OPTIONS
+              value: '{"sslmode":"require"}'
+            - name: S3_BUCKET_NAME
+              value: tandoor-media
+            - name: S3_ENDPOINT_URL
+              value: http://seaweedfs-s3.seaweedfs.svc.cluster.local:8333
+            - name: S3_REGION_NAME
+              value: us-east-1
+            - name: S3_QUERYSTRING_AUTH
+              value: "1"
+            - name: ENABLE_SIGNUP
+              value: "0"
+            - name: SOCIALACCOUNT_LOGIN_ON_GET
+              value: "1"
+            - name: SOCIAL_DEFAULT_ACCESS
+              value: "1"
+            - name: SOCIAL_DEFAULT_GROUP
+              value: user
+            - name: TZ
+              value: America/Chicago
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: tandoor.levizitting.com
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: tandoor.levizitting.com
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: tandoor.levizitting.com
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi

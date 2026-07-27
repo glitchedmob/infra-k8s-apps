@@ -1,0 +1,26 @@
+apiVersion: seaweed.seaweedfs.com/v1
+kind: ResourceReferenceGrant
+metadata:
+  name: tandoor
+  namespace: seaweedfs
+spec:
+  from:
+    - group: seaweed.seaweedfs.com
+      kind: Bucket
+      namespace: tandoor
+    - group: seaweed.seaweedfs.com
+      kind: S3Identity
+      namespace: tandoor
+    - group: seaweed.seaweedfs.com
+      kind: S3Credentials
+      namespace: tandoor
+    - group: seaweed.seaweedfs.com
+      kind: S3Policy
+      namespace: tandoor
+    - group: seaweed.seaweedfs.com
+      kind: S3PolicyBinding
+      namespace: tandoor
+  to:
+    - group: seaweed.seaweedfs.com
+      kind: Seaweed
+      name: seaweedfs

@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - cluster.yaml
   - observability-reference-grant.yaml
+  - tandoor-reference-grant.yaml
