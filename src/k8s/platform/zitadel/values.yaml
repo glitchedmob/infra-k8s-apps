@@ -69,6 +69,7 @@ initJob:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "1"
+    infra.levizitting.com/bootstrap-revision: "2"
   resources:
     requests:
       cpu: 100m
@@ -82,6 +83,7 @@ setupJob:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: "2"
+    infra.levizitting.com/bootstrap-revision: "2"
   activeDeadlineSeconds: 600
   resources:
     requests:
