@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zitadel-login-service-key
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  secretName: zitadel-login-service-key
+  duration: 8760h
+  renewBefore: 720h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: levizitting-ca
+    kind: ClusterIssuer
+    group: cert-manager.io
+  usages:
+    - digital signature
+  dnsNames:
+    - zitadel-login.zitadel.svc.cluster.local

@@ -31,6 +31,7 @@ spec:
     - https://charts.external-secrets.io
     - https://charts.jetstack.io
     - https://charts.longhorn.io
+    - https://charts.zitadel.com
     - https://cloudnative-pg.github.io/charts
     - https://github.com/apecloud/kubeblocks.git
     - https://grafana-community.github.io/helm-charts
