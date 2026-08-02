@@ -29,7 +29,6 @@ spec:
     - https://charts.dexidp.io
     - https://db-operator.github.io/charts
     - https://charts.external-secrets.io
-    - https://charts.goauthentik.io
     - https://charts.jetstack.io
     - https://charts.longhorn.io
     - https://cloudnative-pg.github.io/charts
