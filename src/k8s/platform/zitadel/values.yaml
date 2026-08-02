@@ -14,6 +14,9 @@ zitadel:
     ExternalSecure: true
     TLS:
       Enabled: false
+    DefaultInstance:
+      LoginPolicy:
+        AllowRegister: false
     FirstInstance:
       InstanceName: levizitting.com
       Org:
