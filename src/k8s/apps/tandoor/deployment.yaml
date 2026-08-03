@@ -68,6 +68,8 @@ spec:
               value: "0"
             - name: SOCIALACCOUNT_LOGIN_ON_GET
               value: "1"
+            - name: SOCIALACCOUNT_AUTO_SIGNUP
+              value: "0"
             - name: SOCIAL_DEFAULT_ACCESS
               value: "1"
             - name: SOCIAL_DEFAULT_GROUP
