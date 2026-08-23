@@ -1,0 +1,38 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: sparky-db
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+  bootstrap:
+    initdb:
+      database: sparky
+      owner: sparky
+  managed:
+    roles:
+      - name: sparky
+        ensure: present
+        login: true
+        createrole: true
+      - name: sparky_app
+        ensure: present
+        login: true
+        passwordSecret:
+          name: sparky-app-db
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: required
+    topologyKey: kubernetes.io/hostname
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
