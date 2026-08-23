@@ -16,6 +16,7 @@ resources:
   - frontend-deployment.yaml
   - frontend-service.yaml
   - frontend-pdb.yaml
+  - middleware-https-redirect.yaml
   - ingress.yaml
   - backup-serviceaccount.yaml
   - externalsecret-backup-credentials.yaml

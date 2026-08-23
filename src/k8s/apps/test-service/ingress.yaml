@@ -4,6 +4,7 @@ metadata:
   name: test-service
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: test-service-test-service-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:

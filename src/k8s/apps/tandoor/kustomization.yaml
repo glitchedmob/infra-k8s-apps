@@ -10,6 +10,7 @@ resources:
   - object-storage.yaml
   - deployment.yaml
   - service.yaml
+  - middleware-https-redirect.yaml
   - ingress.yaml
   - backup-serviceaccount.yaml
   - externalsecret-backup-credentials.yaml

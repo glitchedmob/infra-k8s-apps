@@ -4,6 +4,7 @@ metadata:
   name: sparky
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: sparky-sparky-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
