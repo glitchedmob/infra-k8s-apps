@@ -37,6 +37,17 @@ spec:
             authModes:
               - sso
             secure: false
+            extraEnv:
+              - name: SSL_CERT_DIR
+                value: /etc/ssl/levizitting
+            volumes:
+              - name: levizitting-ca-bundle
+                configMap:
+                  name: levizitting-ca-bundle
+            volumeMounts:
+              - name: levizitting-ca-bundle
+                mountPath: /etc/ssl/levizitting
+                readOnly: true
             sso:
               enabled: true
               issuer: https://sso.levizitting.com
