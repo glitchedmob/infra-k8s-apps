@@ -13,6 +13,9 @@ spec:
   target:
     name: ssm-cache
   data:
+    - secretKey: argoWorkflowsClientSecret
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/dex-argo-workflows-client-secret
     - secretKey: argocdClientSecret
       remoteRef:
         key: /vm-workloads/lz/infra-vm-workloads/dex-argocd-client-secret

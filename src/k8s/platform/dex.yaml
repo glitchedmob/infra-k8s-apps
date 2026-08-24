@@ -66,6 +66,11 @@ spec:
                   useLoginAsID: true
 
             staticClients:
+              - id: argo-workflows
+                name: Argo Workflows
+                secretEnv: argoWorkflowsClientSecret
+                redirectURIs:
+                  - https://workflows.levizitting.com/oauth2/callback
               - id: argocd
                 name: ArgoCD
                 secretEnv: argocdClientSecret
