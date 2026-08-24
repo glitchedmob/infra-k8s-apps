@@ -1,0 +1,94 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: platform
+  sources:
+    - chart: argo-workflows
+      repoURL: https://argoproj.github.io/argo-helm
+      targetRevision: 1.0.23
+      helm:
+        values: |
+          images:
+            pullPolicy: IfNotPresent
+
+          controller:
+            workflowRestrictions:
+              templateReferencing: Secure
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+
+          workflow:
+            serviceAccount:
+              create: false
+            rbac:
+              create: false
+
+          server:
+            authModes:
+              - sso
+            secure: false
+            sso:
+              enabled: true
+              issuer: https://sso.levizitting.com
+              clientId:
+                name: argo-workflows-sso
+                key: client-id
+              clientSecret:
+                name: argo-workflows-sso
+                key: client-secret
+              redirectUrl: https://workflows.levizitting.com/oauth2/callback
+              scopes:
+                - openid
+                - profile
+                - email
+              rbac:
+                enabled: true
+                secretWhitelist:
+                  - argo-workflows-sso
+                  - argo-workflows-admin.service-account-token
+            clusterWorkflowTemplates:
+              enableEditing: false
+            livenessProbe:
+              enabled: true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 300m
+                memory: 256Mi
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/platform/services/argo-workflows
+      targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-workflows
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: argo-workflows-admin.service-account-token
+      namespace: argo-workflows
+      jsonPointers:
+        - /data
+    - group: cert-manager.io
+      kind: Certificate
+      jsonPointers:
+        - /spec/duration
+        - /spec/renewBefore
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

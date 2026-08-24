@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo-workflows
+  namespace: argo-workflows
+  annotations:
+    cert-manager.io/cluster-issuer: levizitting-ca
+    traefik.ingress.kubernetes.io/router.middlewares: argo-workflows-argo-workflows-https-redirect@kubernetescrd,argo-workflows-argo-workflows-sso-login-redirect@kubernetescrd,argo-workflows-argo-workflows-sso-login-default@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - workflows.levizitting.com
+      secretName: argo-workflows-tls
+  rules:
+    - host: workflows.levizitting.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argo-workflows-server
+                port:
+                  number: 2746
