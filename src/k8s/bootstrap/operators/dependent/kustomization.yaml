@@ -4,6 +4,7 @@ resources:
   - db-operator.yaml
   - kubeblocks.yaml
   - otel-operator.yaml
+  - percona-mongodb.yaml
   - reloader.yaml
   - trust-manager.yaml
   - valkey-operator.yaml
