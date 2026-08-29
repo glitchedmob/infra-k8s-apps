@@ -1,4 +1,8 @@
 server:
+  serviceAccount:
+    name: openbao
+    annotations:
+      infra.levizitting.com/aws-role-arn: "arn:aws:iam::${AWS_ACCOUNT_ID}:role/lz-k3s/lz-k3s-openbao"
   volumes:
     - name: levizitting-ca-bundle
       configMap:
@@ -12,6 +16,13 @@ server:
     - name: openbao-recovery-config
       configMap:
         name: openbao-recovery
+    - name: aws-web-identity-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: sts.amazonaws.com
+              expirationSeconds: 3600
+              path: token
   volumeMounts:
     - name: levizitting-ca-bundle
       mountPath: /etc/ssl/certs/levizitting-ca.crt
@@ -27,6 +38,16 @@ server:
       args:
         - |
           set -euo pipefail
+          service_account_path=/var/run/secrets/kubernetes.io/serviceaccount
+          kubernetes_token=$(cat "${service_account_path}/token")
+          namespace=$(cat "${service_account_path}/namespace")
+          export AWS_ROLE_ARN="$(
+            curl --fail --silent --show-error \
+              --cacert "${service_account_path}/ca.crt" \
+              --header "Authorization: Bearer ${kubernetes_token}" \
+              "https://kubernetes.default.svc/api/v1/namespaces/${namespace}/serviceaccounts/openbao" |
+              jq -er '.metadata.annotations["eks.amazonaws.com/role-arn"]'
+          )"
           echo "fetch-unseal-key: requesting unseal key from SSM..."
           aws ssm get-parameter \
             --with-decryption \
@@ -68,16 +89,8 @@ server:
       env:
         - name: AWS_REGION
           value: us-east-2
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: external-secrets-aws-creds
-              key: access_key_id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: external-secrets-aws-creds
-              key: secret_access_key
+        - name: AWS_WEB_IDENTITY_TOKEN_FILE
+          value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
       volumeMounts:
         - name: openbao-seal
           mountPath: /openbao/seals
@@ -85,6 +98,9 @@ server:
           mountPath: /openbao/data
         - name: openbao-recovery-work
           mountPath: /recovery
+        - name: aws-web-identity-token
+          mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+          readOnly: true
       resources:
         requests:
           cpu: 50m
