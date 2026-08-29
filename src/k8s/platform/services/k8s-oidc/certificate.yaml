@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: k8s-oidc-lz
+  namespace: k8s-oidc
+spec:
+  secretName: k8s-oidc-lz-tls
+  dnsNames:
+    - k8s-oidc-lz.levizitting.com
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
