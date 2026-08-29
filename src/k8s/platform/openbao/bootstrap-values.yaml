@@ -12,6 +12,10 @@ server:
     - name: openbao-seal
       emptyDir:
         medium: Memory
+    - name: aws-cli-home
+      emptyDir:
+        medium: Memory
+        sizeLimit: 16Mi
     - name: openbao-recovery-work
       emptyDir:
         medium: Memory
@@ -53,9 +57,14 @@ server:
             exit 1
           fi
           echo "fetch-unseal-key: done"
+      env:
+        - name: HOME
+          value: /aws-home
       volumeMounts:
         - name: openbao-seal
           mountPath: /openbao/seals
+        - name: aws-cli-home
+          mountPath: /aws-home
       resources:
         requests:
           cpu: 50m
