@@ -16,10 +16,6 @@ rules:
     resources: ["configmaps"]
     resourceNames: ["openbao-recovery-state"]
     verbs: ["get", "patch"]
-  - apiGroups: [""]
-    resources: ["serviceaccounts"]
-    resourceNames: ["openbao"]
-    verbs: ["get"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
