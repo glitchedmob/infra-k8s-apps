@@ -39,7 +39,7 @@ spec:
               app.kubernetes.io/component: frontend
       containers:
         - name: frontend
-          image: codewithcj/sparkyfitness:v1.6.2
+          image: codewithcj/sparkyfitness:v1.6.4
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 101
