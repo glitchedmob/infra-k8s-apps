@@ -7,4 +7,3 @@ resources:
   - percona-mongodb.yaml
   - reloader.yaml
   - trust-manager.yaml
-  - valkey-operator.yaml
