@@ -56,3 +56,19 @@ spec:
           port: 80
   tls:
     secretName: isp-monitoring-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: isp-monitoring-redirect
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`speedtest.levizitting.com`) || Host(`smokeping.levizitting.com`)
+      middlewares:
+        - name: isp-https-redirect
+      services:
+        - name: noop@internal
+          kind: TraefikService
