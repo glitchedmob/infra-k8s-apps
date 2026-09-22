@@ -12,20 +12,3 @@ spec:
   resources:
     requests:
       storage: 2Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  # Retain legacy RRD history. The prober does not mount this volume.
-  name: smokeping-data
-  labels:
-    backup.k8up.io/app: isp-monitoring
-  annotations:
-    k8up.io/backup: "true"
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 2Gi
