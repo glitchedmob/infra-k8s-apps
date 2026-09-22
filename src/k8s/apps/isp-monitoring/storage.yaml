@@ -16,6 +16,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  # Retain legacy RRD history. The prober does not mount this volume.
   name: smokeping-data
   labels:
     backup.k8up.io/app: isp-monitoring

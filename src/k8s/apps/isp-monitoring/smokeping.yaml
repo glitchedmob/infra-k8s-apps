@@ -4,8 +4,6 @@ metadata:
   name: smokeping
 spec:
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: smokeping
@@ -16,73 +14,79 @@ spec:
     spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
-      initContainers:
-        - name: config
-          image: busybox:1.37.0
-          command: [sh, -ec, 'cp /settings/* /config/']
-          volumeMounts:
-            - name: config
-              mountPath: /config
-            - name: probes
-              mountPath: /settings
-              readOnly: true
-          resources:
-            requests:
-              cpu: 5m
-              memory: 16Mi
-            limits:
-              cpu: 100m
-              memory: 64Mi
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-        - name: smokeping
-          image: lscr.io/linuxserver/smokeping:2.9.0-r0-ls184
+        - name: smokeping-prober
+          image: quay.io/superq/smokeping-prober:v0.12.0
+          args:
+            - --config.file=/etc/smokeping-prober/config.yaml
+          env:
+            - name: GOMAXPROCS
+              value: "1"
           securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
+              drop:
+                - ALL
               add:
                 - NET_RAW
           ports:
-            - name: http
-              containerPort: 80
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: Etc/UTC
+            - name: metrics
+              containerPort: 9374
           volumeMounts:
-            - name: data
-              mountPath: /data
             - name: config
-              mountPath: /config
+              mountPath: /etc/smokeping-prober
+              readOnly: true
           readinessProbe:
+            httpGet:
+              path: /metrics
+              port: metrics
+          livenessProbe:
             tcpSocket:
-              port: http
+              port: metrics
           resources:
             requests:
               cpu: 25m
-              memory: 64Mi
+              memory: 32Mi
             limits:
               cpu: 250m
-              memory: 192Mi
+              memory: 64Mi
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: smokeping-data
         - name: config
-          emptyDir: {}
-        - name: probes
           configMap:
-            name: smokeping-config
+            name: smokeping-prober-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: smokeping
+  labels:
+    app.kubernetes.io/name: smokeping
 spec:
   selector:
     app.kubernetes.io/name: smokeping
   ports:
-    - name: http
-      port: 80
-      targetPort: http
+    - name: metrics
+      port: 9374
+      targetPort: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: smokeping
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: smokeping
+  # Dashboard 18004 queries classic histogram buckets, counts, and sums.
+  scrapeClassicHistograms: true
+  endpoints:
+    - port: metrics
+      interval: 15s

@@ -1,0 +1,12 @@
+targets:
+  - hosts:
+      - 10.20.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+      - 9.9.9.9
+      - x86-vps-node-02.headnet.levizitting.com
+    # Preserve twelve pings per minute per target.
+    interval: 5s
+    network: ip4
+    protocol: icmp
+    size: 56

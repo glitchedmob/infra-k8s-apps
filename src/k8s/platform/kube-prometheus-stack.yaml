@@ -141,6 +141,12 @@ spec:
                       value: prometheus
                     - name: dsProxmox
                       value: prometheus
+                smokeping-prober:
+                  gnetId: 18004
+                  revision: 1
+                  datasource:
+                    - name: DS_PROMETHEUS
+                      value: prometheus
             podAnnotations:
               reloader.stakater.com/auto: "true"
             podDisruptionBudget:
