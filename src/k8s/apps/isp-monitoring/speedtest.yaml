@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: speedtest
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: speedtest
+      annotations:
+        secret.reloader.stakater.com/reload: speedtest-runtime
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      containers:
+        - name: speedtest
+          image: lscr.io/linuxserver/speedtest-tracker:v1.15.0-ls172
+          ports:
+            - name: http
+              containerPort: 80
+          envFrom:
+            - secretRef:
+                name: speedtest-runtime
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: Etc/UTC
+            - name: DISPLAY_TIMEZONE
+              value: America/Chicago
+            - name: APP_URL
+              value: https://speedtest.levizitting.com
+            - name: APP_NAME
+              value: ISP Monitoring
+            - name: ADMIN_EMAIL
+              value: me@levizitting.com
+            - name: ADMIN_NAME
+              value: Levi
+            - name: DB_CONNECTION
+              value: sqlite
+            - name: PUBLIC_DASHBOARD
+              value: "true"
+            - name: SPEEDTEST_SCHEDULE
+              value: "0 */12 * * *"
+            - name: PRUNE_RESULTS_OLDER_THAN
+              value: "90"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          startupProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: speedtest-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speedtest
+spec:
+  selector:
+    app.kubernetes.io/name: speedtest
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

@@ -1,0 +1,7 @@
+*** Probes ***
+
++ FPing
+binary = /usr/sbin/fping
+packetsize = 56
+# Twelve samples per minute, spread five seconds apart per target.
+hostinterval = 5

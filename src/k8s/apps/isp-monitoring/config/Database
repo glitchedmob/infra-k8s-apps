@@ -1,0 +1,11 @@
+*** Database ***
+
+step = 60
+pings = 12
+
+# Keep minute-level loss/latency for 90 days, then hourly summaries for a year.
+# consfn xff steps rows
+AVERAGE 0.5 1 129600
+AVERAGE 0.5 60 8760
+MIN     0.5 60 8760
+MAX     0.5 60 8760
