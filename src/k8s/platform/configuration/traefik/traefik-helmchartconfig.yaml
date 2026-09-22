@@ -15,21 +15,7 @@ spec:
           matchLabels:
             app.kubernetes.io/name: traefik
     ports:
-      # Only explicit private routers use this port. Public edge and tunnel
-      # origins continue to use 80/443, where these routers do not exist.
-      ispprivate:
-        port: 8444
-        exposedPort: 8443
-        expose:
-          default: true
-        protocol: TCP
-        asDefault: false
-        tls:
-          enabled: true
-      web:
-        asDefault: true
       websecure:
-        asDefault: true
         transport:
           respondingTimeouts:
             idleTimeout: 0

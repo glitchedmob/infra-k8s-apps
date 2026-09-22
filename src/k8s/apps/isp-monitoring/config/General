@@ -3,7 +3,7 @@
 owner = Levi
 contact = me@levizitting.com
 mailhost = localhost
-cgiurl = https://smokeping.levizitting.com:8443/smokeping/smokeping.cgi
+cgiurl = https://smokeping.levizitting.com/smokeping/smokeping.cgi
 syslogfacility = local0
 
 @include /config/pathnames

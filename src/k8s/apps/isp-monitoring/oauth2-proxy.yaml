@@ -29,7 +29,7 @@ spec:
             - --provider=oidc
             - --provider-display-name=ZITADEL
             - --http-address=0.0.0.0:4180
-            - --redirect-url=https://speedtest.levizitting.com:8443/oauth2/callback
+            - --redirect-url=https://speedtest.levizitting.com/oauth2/callback
             - --upstream=static://200
             - --reverse-proxy=true
             - --skip-provider-button=true
@@ -40,8 +40,8 @@ spec:
             - --cookie-domain=.levizitting.com
             - --cookie-secure=true
             - --cookie-expire=8h
-            - --whitelist-domain=speedtest.levizitting.com:8443
-            - --whitelist-domain=smokeping.levizitting.com:8443
+            - --whitelist-domain=speedtest.levizitting.com
+            - --whitelist-domain=smokeping.levizitting.com
           envFrom:
             - secretRef:
                 name: isp-oauth2-proxy

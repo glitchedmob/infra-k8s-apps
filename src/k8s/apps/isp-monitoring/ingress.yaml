@@ -31,9 +31,8 @@ kind: IngressRoute
 metadata:
   name: isp-monitoring
 spec:
-  # No routers on web/websecure: neither public ingress path can reach these.
   entryPoints:
-    - ispprivate
+    - websecure
   routes:
     - kind: Rule
       match: Host(`speedtest.levizitting.com`) && PathPrefix(`/oauth2/`)

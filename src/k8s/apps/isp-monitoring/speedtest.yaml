@@ -42,7 +42,7 @@ spec:
             - name: DISPLAY_TIMEZONE
               value: America/Chicago
             - name: APP_URL
-              value: https://speedtest.levizitting.com:8443
+              value: https://speedtest.levizitting.com
             - name: APP_NAME
               value: ISP Monitoring
             - name: ADMIN_EMAIL
