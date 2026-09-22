@@ -29,18 +29,17 @@ spec:
             - --provider=oidc
             - --provider-display-name=ZITADEL
             - --http-address=0.0.0.0:4180
-            - --redirect-url=https://speedtest.levizitting.com/oauth2/callback
+            - --redirect-url=https://smokeping.levizitting.com/oauth2/callback
             - --upstream=static://200
             - --reverse-proxy=true
             - --skip-provider-button=true
             - --code-challenge-method=S256
             - --scope=openid email profile
             - --authenticated-emails-file=/etc/isp/allowed-emails
-            - --cookie-name=_isp_oauth2_proxy
-            - --cookie-domain=.levizitting.com
+            - --cookie-name=_smokeping_oauth2_proxy
+            - --cookie-domain=smokeping.levizitting.com
             - --cookie-secure=true
             - --cookie-expire=8h
-            - --whitelist-domain=speedtest.levizitting.com
             - --whitelist-domain=smokeping.levizitting.com
           envFrom:
             - secretRef:
