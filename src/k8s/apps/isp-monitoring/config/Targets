@@ -32,3 +32,8 @@ host = 8.8.8.8
 menu = Quad9
 title = Quad9 DNS
 host = 9.9.9.9
+
+++ PublicEdge
+menu = Public edge
+title = Public edge
+host = public-edge.levizitting.com
