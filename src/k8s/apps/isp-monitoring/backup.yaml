@@ -1,0 +1,73 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: isp-backup-credentials
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-ssm
+    kind: ClusterSecretStore
+  target:
+    name: k8up-b2-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: account-id
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/b2-account-id
+    - secretKey: account-key
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/b2-account-key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: isp-backup-password
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: isp-monitoring-openbao
+    kind: SecretStore
+  target:
+    name: isp-backup-password
+    creationPolicy: Owner
+  data:
+    - secretKey: password
+      remoteRef:
+        key: isp-monitoring/backup
+        property: resticPassword
+---
+apiVersion: k8up.io/v1
+kind: Schedule
+metadata:
+  name: isp-monitoring
+spec:
+  backend:
+    repoPasswordSecretRef:
+      name: isp-backup-password
+      key: password
+    b2:
+      bucket: levizitting-on-prem-k3s-backups
+      path: isp-monitoring
+      accountIDSecretRef:
+        name: k8up-b2-credentials
+        key: account-id
+      accountKeySecretRef:
+        name: k8up-b2-credentials
+        key: account-key
+  backup:
+    schedule: '15 8 * * *'
+    clusterName: lz
+    promURL: http://prometheus-pushgateway.observability.svc.cluster.local:9091
+    failedJobsHistoryLimit: 2
+    successfulJobsHistoryLimit: 2
+    labelSelectors:
+      - matchLabels:
+          backup.k8up.io/app: isp-monitoring
+  check:
+    schedule: '0 9 * * 1'
+  prune:
+    schedule: '0 10 * * 0'
+    retention:
+      keepLast: 5
+      keepDaily: 14
+      keepWeekly: 4

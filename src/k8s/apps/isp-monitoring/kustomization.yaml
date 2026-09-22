@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: isp-monitoring
+resources:
+  - namespace.yaml
+  - secretstore.yaml
+  - externalsecret.yaml
+  - storage.yaml
+  - speedtest.yaml
+  - smokeping.yaml
+  - oauth2-proxy.yaml
+  - ingress.yaml
+  - networkpolicy.yaml
+  - scheduler.yaml
+  - backup.yaml
+configMapGenerator:
+  - name: speedtest-init
+    files:
+      - init-scheduler.sh=config/init-scheduler.sh
+  - name: speedtest-scripts
+    files:
+      - init-scheduler.php=config/init-scheduler.php
+      - backup.php=config/backup.php
+  - name: speedtest-schedule
+    files:
+      - run.sh=config/run.sh
+  - name: smokeping-config
+    files:
+      - Database=config/Database
+      - General=config/General
+      - Probes=config/Probes
+      - Targets=config/Targets
+  - name: isp-allowed-emails
+    literals:
+      - allowed-emails=me@levizitting.com
