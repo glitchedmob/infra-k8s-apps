@@ -13,13 +13,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: speedtest
-        backup.k8up.io/app: isp-monitoring
       annotations:
         secret.reloader.stakater.com/reload: speedtest-runtime
-        k8up.io/backup: "true"
-        k8up.io/backupcommand: php /opt/isp-monitoring/backup.php
-        k8up.io/backupcommand-container: speedtest
-        k8up.io/file-extension: .tar
     spec:
       automountServiceAccountToken: false
       enableServiceLinks: false

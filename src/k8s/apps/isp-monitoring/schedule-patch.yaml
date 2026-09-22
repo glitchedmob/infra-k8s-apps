@@ -1,0 +1,15 @@
+- op: replace
+  path: /metadata/name
+  value: isp-monitoring
+- op: replace
+  path: /spec/backend/repoPasswordSecretRef/name
+  value: isp-backup-password
+- op: replace
+  path: /spec/backend/b2/path
+  value: isp-monitoring
+- op: replace
+  path: /spec/backup/schedule
+  value: '15 8 * * *'
+- op: replace
+  path: /spec/backup/labelSelectors/0/matchLabels/backup.k8up.io~1app
+  value: isp-monitoring

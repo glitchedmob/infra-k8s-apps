@@ -1,57 +1,136 @@
-apiVersion: batch/v1
-kind: CronJob
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: speedtest-scheduler
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: speedtest-scheduler
+rules:
+  - apiGroups: [argoproj.io]
+    resources: [workflowtaskresults]
+    verbs: [create, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: speedtest-scheduler
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: speedtest-scheduler
+subjects:
+  - kind: ServiceAccount
+    name: speedtest-scheduler
+---
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
 metadata:
   name: speedtest
 spec:
-  schedule: "0 0,12 * * *"
-  timeZone: Etc/UTC
+  schedules:
+    - '0 0,12 * * *'
+  timezone: Etc/UTC
   concurrencyPolicy: Forbid
   startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
-  jobTemplate:
-    spec:
-      backoffLimit: 0
-      activeDeadlineSeconds: 36300
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: speedtest-scheduler
-        spec:
-          automountServiceAccountToken: false
-          enableServiceLinks: false
-          restartPolicy: Never
-          securityContext:
-            runAsNonRoot: true
-            seccompProfile:
-              type: RuntimeDefault
-          containers:
-            - name: schedule
-              image: curlimages/curl:8.19.0
-              command: [sh, /schedule/run.sh]
-              securityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
-                capabilities:
-                  drop: [ALL]
-              env:
-                - name: SCHEDULER_API_TOKEN
-                  valueFrom:
-                    secretKeyRef:
-                      name: speedtest-runtime
-                      key: SCHEDULER_API_TOKEN
-              volumeMounts:
-                - name: schedule
-                  mountPath: /schedule
-                  readOnly: true
-              resources:
-                requests:
-                  cpu: 5m
-                  memory: 16Mi
-                limits:
-                  cpu: 100m
-                  memory: 64Mi
-          volumes:
-            - name: schedule
-              configMap:
-                name: speedtest-schedule
+  workflowSpec:
+    workflowTemplateRef:
+      name: speedtest-scheduler
+---
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: speedtest-scheduler
+spec:
+  entrypoint: scheduled-test
+  serviceAccountName: speedtest-scheduler
+  activeDeadlineSeconds: 36300
+  retryStrategy:
+    limit: '0'
+  podMetadata:
+    labels:
+      app.kubernetes.io/name: speedtest-scheduler
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  podGC:
+    strategy: OnPodCompletion
+    deleteDelayDuration: 10m
+  templates:
+    - name: scheduled-test
+      steps:
+        - - name: choose-delay
+            template: choose-delay
+        - - name: wait
+            template: wait
+            arguments:
+              parameters:
+                - name: duration
+                  value: '{{steps.choose-delay.outputs.result}}'
+        - - name: run
+            template: run
+    - name: choose-delay
+      activeDeadlineSeconds: 120
+      script:
+        image: busybox:1.37.0
+        command: [sh]
+        source: |
+          set -eu
+          random=$(od -An -N4 -tu4 /dev/urandom | tr -d ' ')
+          printf '%ss\n' "$((random % 36000))"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+    - name: wait
+      inputs:
+        parameters:
+          - name: duration
+      # Argo persists the chosen delay and runs no pod during this step.
+      suspend:
+        duration: '{{inputs.parameters.duration}}'
+    - name: run
+      activeDeadlineSeconds: 120
+      container:
+        image: curlimages/curl:8.19.0
+        command: [sh, -ec]
+        args:
+          - |
+            # Do not retry a POST that may already have queued a test.
+            exec curl --fail-with-body --silent --show-error \
+              --connect-timeout 10 --max-time 30 \
+              --request POST \
+              --header "Authorization: Bearer ${SCHEDULER_API_TOKEN}" \
+              --header 'Accept: application/json' \
+              http://speedtest/api/v1/speedtests/run
+        env:
+          - name: SCHEDULER_API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: speedtest-runtime
+                key: SCHEDULER_API_TOKEN
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [ALL]
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi

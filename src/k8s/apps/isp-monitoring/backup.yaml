@@ -36,38 +36,8 @@ spec:
         key: isp-monitoring/backup
         property: resticPassword
 ---
-apiVersion: k8up.io/v1
-kind: Schedule
+apiVersion: v1
+kind: ServiceAccount
 metadata:
-  name: isp-monitoring
-spec:
-  backend:
-    repoPasswordSecretRef:
-      name: isp-backup-password
-      key: password
-    b2:
-      bucket: levizitting-on-prem-k3s-backups
-      path: isp-monitoring
-      accountIDSecretRef:
-        name: k8up-b2-credentials
-        key: account-id
-      accountKeySecretRef:
-        name: k8up-b2-credentials
-        key: account-key
-  backup:
-    schedule: '15 8 * * *'
-    clusterName: lz
-    promURL: http://prometheus-pushgateway.observability.svc.cluster.local:9091
-    failedJobsHistoryLimit: 2
-    successfulJobsHistoryLimit: 2
-    labelSelectors:
-      - matchLabels:
-          backup.k8up.io/app: isp-monitoring
-  check:
-    schedule: '0 9 * * 1'
-  prune:
-    schedule: '0 10 * * 0'
-    retention:
-      keepLast: 5
-      keepDaily: 14
-      keepWeekly: 4
+  name: isp-monitoring-backup
+automountServiceAccountToken: false
