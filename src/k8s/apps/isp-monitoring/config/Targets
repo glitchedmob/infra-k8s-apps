@@ -36,4 +36,4 @@ host = 9.9.9.9
 ++ PublicEdge
 menu = Public edge
 title = Public edge
-host = public-edge.levizitting.com
+host = x86-vps-node-02.headnet.levizitting.com
