@@ -1,0 +1,13 @@
+targets:
+  - hosts:
+      - 10.20.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+      - 9.9.9.9
+      - x86-vps-node-02.headnet.levizitting.com
+    # Preserve twelve pings per minute per target.
+    interval: 5s
+    network: ip4
+    # Unprivileged ICMP echo via Linux datagram ping sockets, not UDP probes.
+    protocol: udp
+    size: 56

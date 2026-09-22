@@ -9,7 +9,6 @@ resources:
   - storage.yaml
   - speedtest.yaml
   - smokeping.yaml
-  - oauth2-proxy.yaml
   - ingress.yaml
   - middleware-https-redirect.yaml
   - networkpolicy.yaml
@@ -28,12 +27,6 @@ patches:
       name: app-backup
       version: v1
 configMapGenerator:
-  - name: smokeping-config
+  - name: smokeping-prober-config
     files:
-      - Database=config/Database
-      - General=config/General
-      - Probes=config/Probes
-      - Targets=config/Targets
-  - name: isp-allowed-emails
-    literals:
-      - allowed-emails=me@levizitting.com
+      - config.yaml=config/prober.yaml
