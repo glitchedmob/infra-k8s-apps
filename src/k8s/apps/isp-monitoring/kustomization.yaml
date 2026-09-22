@@ -12,7 +12,6 @@ resources:
   - oauth2-proxy.yaml
   - ingress.yaml
   - networkpolicy.yaml
-  - scheduler.yaml
   - backup.yaml
 patches:
   - path: backup-patch.yaml
@@ -33,7 +32,7 @@ configMapGenerator:
       - init-scheduler.sh=config/init-scheduler.sh
   - name: speedtest-scripts
     files:
-      - init-scheduler.php=config/init-scheduler.php
+      - scheduler.php=config/scheduler.php
   - name: smokeping-config
     files:
       - Database=config/Database
