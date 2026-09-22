@@ -11,6 +11,7 @@ resources:
   - smokeping.yaml
   - oauth2-proxy.yaml
   - ingress.yaml
+  - middleware-https-redirect.yaml
   - networkpolicy.yaml
   - backup.yaml
 patches:
