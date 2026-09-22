@@ -15,10 +15,14 @@ spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
         seccompProfile:
           type: RuntimeDefault
+        sysctls:
+          - name: net.ipv4.ping_group_range
+            value: "65534 65534"
       containers:
         - name: smokeping-prober
           image: quay.io/superq/smokeping-prober:v0.12.0
@@ -33,8 +37,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-              add:
-                - NET_RAW
           ports:
             - name: metrics
               containerPort: 9374

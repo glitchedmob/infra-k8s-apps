@@ -8,5 +8,6 @@ targets:
     # Preserve twelve pings per minute per target.
     interval: 5s
     network: ip4
-    protocol: icmp
+    # Unprivileged ICMP echo via Linux datagram ping sockets, not UDP probes.
+    protocol: udp
     size: 56
