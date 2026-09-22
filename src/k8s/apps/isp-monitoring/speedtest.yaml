@@ -49,18 +49,12 @@ spec:
             - name: PUBLIC_DASHBOARD
               value: "true"
             - name: SPEEDTEST_SCHEDULE
-              value: ""
+              value: "0 */12 * * *"
             - name: PRUNE_RESULTS_OLDER_THAN
               value: "90"
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: init
-              mountPath: /custom-cont-init.d
-              readOnly: true
-            - name: scripts
-              mountPath: /opt/isp-monitoring
-              readOnly: true
           startupProbe:
             httpGet:
               path: /api/healthcheck
@@ -81,13 +75,6 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: speedtest-config
-        - name: init
-          configMap:
-            name: speedtest-init
-            defaultMode: 0555
-        - name: scripts
-          configMap:
-            name: speedtest-scripts
 ---
 apiVersion: v1
 kind: Service

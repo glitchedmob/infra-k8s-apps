@@ -27,12 +27,6 @@ patches:
       name: app-backup
       version: v1
 configMapGenerator:
-  - name: speedtest-init
-    files:
-      - init-scheduler.sh=config/init-scheduler.sh
-  - name: speedtest-scripts
-    files:
-      - scheduler.php=config/scheduler.php
   - name: smokeping-config
     files:
       - Database=config/Database
