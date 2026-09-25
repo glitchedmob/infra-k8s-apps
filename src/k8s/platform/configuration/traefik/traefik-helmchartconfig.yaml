@@ -191,6 +191,17 @@ spec:
                 app.kubernetes.io/instance: traefik-kube-system
                 app.kubernetes.io/name: traefik
             topologyKey: kubernetes.io/hostname
+    experimental:
+      plugins:
+        bouncer:
+          moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+          version: v1.7.1
+    volumes:
+      - name: crowdsec-bouncer-key
+        mountPath: /etc/traefik/crowdsec
+        type: secret
+    additionalArguments:
+      - --entrypoints.websecure.http.middlewares=kube-system-crowdsec-strip-client-header@kubernetescrd,kube-system-crowdsec-appsec@kubernetescrd
     ports:
       web:
         asDefault: true

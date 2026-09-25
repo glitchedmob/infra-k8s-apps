@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crowdsec
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    infra.levizitting.com/health-gate: "true"
+spec:
+  project: platform
+  source:
+    chart: crowdsec
+    repoURL: https://crowdsecurity.github.io/helm-charts
+    targetRevision: 0.24.2
+    helm:
+      values: |
+        container_runtime: containerd
+        agent:
+          acquisition:
+            - namespace: kube-system
+              podName: traefik-*
+              program: traefik
+          env:
+            - name: COLLECTIONS
+              value: crowdsecurity/traefik
+        appsec:
+          enabled: true
+          replicas: 2
+          acquisitions:
+            - source: appsec
+              listen_addr: "0.0.0.0:7422"
+              path: /
+              appsec_config: crowdsecurity/appsec-default
+              labels:
+                type: appsec
+          env:
+            - name: COLLECTIONS
+              value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: crowdsec
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
