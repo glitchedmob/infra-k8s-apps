@@ -8,7 +8,7 @@ spec:
     deployment:
       replicas: 3
       podAnnotations:
-        secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth
+        secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth,crowdsec-bouncer-key
       additionalVolumes:
         - name: cloudflared-no-api-token
           emptyDir:
