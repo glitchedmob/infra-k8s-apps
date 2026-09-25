@@ -4,4 +4,5 @@ resources:
   - traefik-helmchartconfig.yaml
   - cloudflared-token.yaml
   - traefik-ingress-policy.yaml
+  - traefik-edge-nodeport.yaml
   - traefik-dashboard-ingress
