@@ -7,6 +7,90 @@ spec:
   valuesContent: |-
     deployment:
       replicas: 3
+      podAnnotations:
+        secret.reloader.stakater.com/reload: cloudflared-token
+      additionalVolumes:
+        - name: cloudflared-no-api-token
+          emptyDir:
+            medium: Memory
+        # Only the public CA certificate is mounted, not the TLS private key.
+        - name: cloudflared-origin-ca
+          secret:
+            secretName: traefik-dashboard-tls
+            items:
+              - key: ca.crt
+                path: ca.crt
+      additionalContainers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2026.8.2
+          imagePullPolicy: IfNotPresent
+          command:
+            - cloudflared
+            - tunnel
+            - --no-autoupdate
+            - --protocol
+            - http2
+            - --loglevel
+            - info
+            - --metrics
+            - 0.0.0.0:2000
+            - run
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflared-token
+                  key: token
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+          # Traefik needs its service account token; the connector does not.
+          volumeMounts:
+            - name: cloudflared-no-api-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+            - name: cloudflared-origin-ca
+              mountPath: /etc/cloudflared/origin-ca
+              readOnly: true
+          ports:
+            - name: tunnel-metrics
+              containerPort: 2000
+          startupProbe:
+            httpGet:
+              path: /ready
+              port: tunnel-metrics
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: tunnel-metrics
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: tunnel-metrics
+            periodSeconds: 30
+            timeoutSeconds: 2
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
     topologySpreadConstraints:
       - maxSkew: 1
         topologyKey: kubernetes.io/hostname
@@ -16,6 +100,12 @@ spec:
             app.kubernetes.io/name: traefik
     ports:
       websecure:
+        # Tunnel origin: https://127.0.0.1:8443, with Origin Server Name
+        # traefik.levizitting.com and CA Pool /etc/cloudflared/origin-ca/ca.crt.
+        # Only the co-located connector can supply the visitor's scheme.
+        forwardedHeaders:
+          trustedIPs:
+            - 127.0.0.1/32
         transport:
           respondingTimeouts:
             idleTimeout: 0
