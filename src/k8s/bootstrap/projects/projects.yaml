@@ -28,6 +28,7 @@ spec:
     - https://apecloud.github.io/helm-charts
     - https://argoproj.github.io/argo-helm
     - https://charts.dexidp.io
+    - https://crowdsecurity.github.io/helm-charts
     - https://db-operator.github.io/charts
     - https://charts.external-secrets.io
     - https://charts.jetstack.io

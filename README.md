@@ -22,6 +22,7 @@ The application generator discovers top-level Kustomizations and nested overlay 
 - The edge cluster forwards `*.levizitting.com` traffic to internal LZ k3s nodes.
 - HTTPS is SNI passthrough at the edge, so TLS terminates on the destination workload cluster ingress.
 - This repo defines destination ingresses/services; edge entry and forwarding rules are owned by [`glitchedmob/infra-public-edge`](https://github.com/glitchedmob/infra-public-edge).
+- Traefik's CrowdSec AppSec integration and its client-IP limitation are documented in [docs/crowdsec.md](docs/crowdsec.md).
 
 ## Application backups
 
