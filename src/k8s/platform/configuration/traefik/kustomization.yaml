@@ -5,4 +5,7 @@ resources:
   - cloudflared-token.yaml
   - traefik-ingress-policy.yaml
   - traefik-edge-nodeport.yaml
+  - middleware-crowdsec.yaml
+  - middleware-crowdsec-header.yaml
+  - externalsecret-crowdsec.yaml
   - traefik-dashboard-ingress

@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-appsec
+  namespace: kube-system
+spec:
+  plugin:
+    bouncer:
+      enabled: true
+      # Direct HTTPS through the public edge does not preserve the visitor IP.
+      # Do not enforce IP decisions until both ingress paths have verified client IPs.
+      crowdsecMode: appsec
+      # The preceding middleware removes this header; use the socket peer only.
+      forwardedHeadersCustomName: X-Crowdsec-Verified-Client-IP
+      crowdsecLapiKeyFile: /etc/traefik/crowdsec/BOUNCER_KEY_traefik
+      crowdsecAppsecEnabled: true
+      crowdsecAppsecHost: crowdsec-appsec-service.crowdsec.svc.cluster.local:7422
+      crowdsecAppsecFailureBlock: true
+      # Keep apps reachable during AppSec outages; alert on AppSec availability.
+      crowdsecAppsecUnreachableBlock: false

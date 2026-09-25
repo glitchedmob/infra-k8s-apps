@@ -1,0 +1,9 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: crowdsec-strip-client-header
+  namespace: kube-system
+spec:
+  headers:
+    customRequestHeaders:
+      X-Crowdsec-Verified-Client-IP: ""
