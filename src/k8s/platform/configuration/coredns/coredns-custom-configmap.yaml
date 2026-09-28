@@ -8,5 +8,5 @@ data:
     levizitting.com:53 {
       errors
       cache 30
-      forward . 10.255.255.1
+      forward . 10.55.0.53
     }
