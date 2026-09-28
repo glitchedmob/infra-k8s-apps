@@ -1,0 +1,208 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dns-gateway
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+      errors
+      health :8080
+      ready :8181
+      forward . 10.255.255.1
+    }
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: dns-gateway-auth-key
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-ssm
+    kind: ClusterSecretStore
+  target:
+    name: dns-gateway-auth-key
+    creationPolicy: Owner
+  data:
+    - secretKey: authkey
+      remoteRef:
+        key: /homelab/headscale/pods/lz/dns-gateway-auth-key
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dns-gateway
+  namespace: kube-system
+spec:
+  replicas: 2
+  serviceName: dns-gateway-headless
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dns-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dns-gateway
+      annotations:
+        configmap.reloader.stakater.com/reload: dns-gateway
+    spec:
+      # Neither container may bootstrap through the cluster DNS that forwards here.
+      automountServiceAccountToken: false
+      dnsPolicy: None
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1
+          - 9.9.9.9
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: dns-gateway
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: tailscale
+          image: tailscale/tailscale:v1.88.4
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: dns-gateway-auth-key
+                  key: authkey
+            - name: TS_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: TS_EXTRA_ARGS
+              value: --login-server=https://headscale.levizitting.com --accept-routes
+            - name: TS_ACCEPT_DNS
+              value: "false"
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_STATE_DIR
+              value: /var/lib/tailscale
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_AUTH_ONCE
+              value: "true"
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -ec
+                - 'tailscale status --json | grep -Eq ''"BackendState"[[:space:]]*:[[:space:]]*"Running"'''
+            periodSeconds: 10
+          volumeMounts:
+            - name: state
+              mountPath: /var/lib/tailscale
+            - name: tun
+              mountPath: /dev/net/tun
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+        - name: coredns
+          image: rancher/mirrored-coredns-coredns:1.14.6
+          args:
+            - -conf
+            - /etc/coredns/Corefile
+          ports:
+            - name: dns-udp
+              containerPort: 53
+              protocol: UDP
+            - name: dns-tcp
+              containerPort: 53
+              protocol: TCP
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+            - name: ready
+              containerPort: 8181
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: health
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: ready
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /etc/coredns
+              readOnly: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+      volumes:
+        - name: config
+          configMap:
+            name: dns-gateway
+        - name: tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+  volumeClaimTemplates:
+    - metadata:
+        name: state
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dns-gateway-headless
+  namespace: kube-system
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: dns-gateway
+  ports:
+    - name: dns-udp
+      port: 53
+      protocol: UDP
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dns-gateway
+  namespace: kube-system
+spec:
+  type: ClusterIP
+  clusterIP: 10.55.0.53
+  selector:
+    app.kubernetes.io/name: dns-gateway
+  ports:
+    - name: dns-udp
+      port: 53
+      targetPort: dns-udp
+      protocol: UDP
+    - name: dns-tcp
+      port: 53
+      targetPort: dns-tcp
+      protocol: TCP

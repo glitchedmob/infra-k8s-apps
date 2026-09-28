@@ -4,3 +4,4 @@ resources:
   - coredns-custom-configmap.yaml
   - coredns-deployment.yaml
   - coredns-pdb.yaml
+  - dns-gateway.yaml
