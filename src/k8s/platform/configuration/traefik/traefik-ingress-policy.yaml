@@ -20,3 +20,7 @@ spec:
           protocol: TCP
         - port: 9100
           protocol: TCP
+        # Let tailscaled receive encrypted peer traffic; Headscale limits
+        # which peers may reach Traefik's TCP listeners.
+        - port: 41641
+          protocol: UDP
