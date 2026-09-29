@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: visitor-ip-probe-cf-tls
+spec:
+  secretName: visitor-ip-probe-cf-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+    group: cert-manager.io
+  dnsNames:
+    - visitor-ip-probe-cf.levizitting.com
+  usages:
+    - digital signature
+    - key encipherment

@@ -1,0 +1,26 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: client-headers
+spec:
+  headers:
+    # Retain X-Forwarded-For and X-Forwarded-Proto from the entrypoint's trust
+    # handling. Consumers must interpret XFF from the trusted end of the chain.
+    customRequestHeaders:
+      Forwarded: ""
+      CF-Connecting-IP: ""
+      CF-Connecting-IPv6: ""
+      True-Client-IP: ""
+      X-Real-IP: ""
+      X-Client-IP: ""
+      X-Cluster-Client-IP: ""
+      X-Originating-IP: ""
+      X-Remote-IP: ""
+      X-Remote-Addr: ""
+      X-Original-Forwarded-For: ""
+      X-Forwarded: ""
+      X-Forwarded-Host: ""
+      X-Forwarded-Port: ""
+      X-Forwarded-Server: ""
+      X-Verified-Client-IP: ""
+      X-Crowdsec-Verified-Client-IP: ""
