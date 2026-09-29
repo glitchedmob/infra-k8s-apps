@@ -125,9 +125,14 @@ spec:
               value: /var/lib/tailscale
             - name: TS_KUBE_SECRET
               value: ""
+            # Filesystem state needs no Kubernetes client or service-account token.
+            - name: KUBERNETES_SERVICE_HOST
+              value: ""
             - name: TS_AUTH_ONCE
               value: "true"
           securityContext:
+            # Override the chart's pod-level non-root policy for this sidecar only.
+            runAsNonRoot: false
             runAsUser: 0
             allowPrivilegeEscalation: false
             seccompProfile:
