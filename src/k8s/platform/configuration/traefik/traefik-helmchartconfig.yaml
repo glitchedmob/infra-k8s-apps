@@ -192,13 +192,21 @@ spec:
                 app.kubernetes.io/name: traefik
             topologyKey: kubernetes.io/hostname
     ports:
-      # Explicit defaults keep implicit application routers off the probe listener.
       web:
         asDefault: true
+        # The edge uses HTTP L7 forwarding; the connector also uses HTTP for ACME.
+        forwardedHeaders:
+          trustedIPs:
+            - 100.64.0.10/32
+            - 127.0.0.1/32
+          notAppendXForwardedFor: true
+        http:
+          middlewares:
+            - kube-system-client-headers@kubernetescrd
       cloudflared:
         port: 9443
         hostIP: 127.0.0.1
-        asDefault: false
+        asDefault: true
         expose:
           default: false
         protocol: TCP
@@ -208,6 +216,8 @@ spec:
           # Preserve Cloudflare's chain without appending the connector's loopback IP.
           notAppendXForwardedFor: true
         http:
+          middlewares:
+            - kube-system-client-headers@kubernetescrd
           tls:
             enabled: true
         transport:
@@ -215,6 +225,9 @@ spec:
             idleTimeout: 0
       websecure:
         asDefault: true
+        http:
+          middlewares:
+            - kube-system-client-headers@kubernetescrd
         # Only the public edge may supply a PROXY-protocol visitor address.
         proxyProtocol:
           trustedIPs:
