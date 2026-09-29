@@ -7,3 +7,4 @@ resources:
   - traefik-ingress-policy.yaml
   - traefik-edge-nodeport.yaml
   - traefik-dashboard-ingress
+  - visitor-ip-probe
