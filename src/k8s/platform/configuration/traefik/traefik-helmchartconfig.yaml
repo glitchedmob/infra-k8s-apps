@@ -192,7 +192,29 @@ spec:
                 app.kubernetes.io/name: traefik
             topologyKey: kubernetes.io/hostname
     ports:
+      # Explicit defaults keep implicit application routers off the probe listener.
+      web:
+        asDefault: true
+      cloudflared:
+        port: 9443
+        hostIP: 127.0.0.1
+        asDefault: false
+        expose:
+          default: false
+        protocol: TCP
+        forwardedHeaders:
+          trustedIPs:
+            - 127.0.0.1/32
+          # Preserve Cloudflare's chain without appending the connector's loopback IP.
+          notAppendXForwardedFor: true
+        http:
+          tls:
+            enabled: true
+        transport:
+          respondingTimeouts:
+            idleTimeout: 0
       websecure:
+        asDefault: true
         # Only the public edge may supply a PROXY-protocol visitor address.
         proxyProtocol:
           trustedIPs:

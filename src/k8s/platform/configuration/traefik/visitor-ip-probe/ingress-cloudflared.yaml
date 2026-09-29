@@ -1,0 +1,17 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: visitor-ip-probe-cloudflared
+spec:
+  entryPoints:
+    - cloudflared
+  routes:
+    - match: Host(`visitor-ip-probe-cf.levizitting.com`) && Path(`/api`) && Method(`GET`) && !QueryRegexp(`env`, `.*`)
+      kind: Rule
+      middlewares:
+        - name: client-headers
+      services:
+        - name: visitor-ip-probe
+          port: 80
+  tls:
+    secretName: visitor-ip-probe-cf-tls
