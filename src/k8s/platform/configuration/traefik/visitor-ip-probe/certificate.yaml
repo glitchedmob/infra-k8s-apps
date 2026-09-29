@@ -4,9 +4,8 @@ metadata:
   name: visitor-ip-probe-tls
 spec:
   secretName: visitor-ip-probe-tls
-  # The probe uses curl --resolve and the existing CA, not public DNS or HTTP-01.
   issuerRef:
-    name: levizitting-ca
+    name: letsencrypt-prod
     kind: ClusterIssuer
     group: cert-manager.io
   dnsNames:
