@@ -6,10 +6,12 @@ metadata:
 spec:
   entryPoints:
     - websecure
+    - cloudflared
   routes:
     - match: Host(`traefik.levizitting.com`)
       kind: Rule
       middlewares:
+        - name: traefik-dashboard-https-redirect
         - name: oauth2-forward-auth
           namespace: oauth2-proxy
       services:

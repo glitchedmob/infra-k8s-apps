@@ -20,9 +20,12 @@ metadata:
 spec:
   entryPoints:
     - websecure
+    - cloudflared
   routes:
     - kind: Rule
       match: Host(`speedtest.levizitting.com`)
+      middlewares:
+        - name: isp-https-redirect
       services:
         - name: speedtest
           port: 80

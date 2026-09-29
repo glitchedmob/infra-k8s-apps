@@ -9,8 +9,6 @@ spec:
     # Exclude whoami's mutable health, bulk data, delay and environment endpoints.
     - match: Host(`visitor-ip-probe.levizitting.com`) && Path(`/api`) && Method(`GET`) && !QueryRegexp(`env`, `.*`)
       kind: Rule
-      middlewares:
-        - name: client-headers
       services:
         - name: visitor-ip-probe
           port: 80

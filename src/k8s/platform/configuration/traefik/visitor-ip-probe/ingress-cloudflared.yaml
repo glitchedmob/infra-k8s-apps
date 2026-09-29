@@ -8,8 +8,6 @@ spec:
   routes:
     - match: Host(`visitor-ip-probe-cf.levizitting.com`) && Path(`/api`) && Method(`GET`) && !QueryRegexp(`env`, `.*`)
       kind: Rule
-      middlewares:
-        - name: client-headers
       services:
         - name: visitor-ip-probe
           port: 80

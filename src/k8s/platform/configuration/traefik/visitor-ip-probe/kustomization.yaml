@@ -7,7 +7,6 @@ resources:
   - service.yaml
   - ingress.yaml
   - ingress-cloudflared.yaml
-  - middleware-client-headers.yaml
   - certificate.yaml
   - certificate-cloudflared.yaml
   - networkpolicy.yaml
