@@ -193,6 +193,10 @@ spec:
             topologyKey: kubernetes.io/hostname
     ports:
       websecure:
+        # Only the public edge may supply a PROXY-protocol visitor address.
+        proxyProtocol:
+          trustedIPs:
+            - 100.64.0.10/32
         # Tunnel origin: https://127.0.0.1:8443, with Origin Server Name
         # traefik.levizitting.com and CA Pool /etc/cloudflared/origin-ca/ca.crt.
         # Only the co-located connector can supply the visitor's scheme.
