@@ -8,7 +8,7 @@ spec:
     deployment:
       replicas: 3
       podAnnotations:
-        secret.reloader.stakater.com/reload: cloudflared-token
+        secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth
       additionalVolumes:
         - name: cloudflared-no-api-token
           emptyDir:
@@ -20,6 +20,16 @@ spec:
             items:
               - key: ca.crt
                 path: ca.crt
+        # The node's Traefik replica keeps its tailnet identity across pod rollouts.
+        # This is separate from the node's own Tailscale state.
+        - name: traefik-tailnet-state
+          hostPath:
+            path: /var/lib/lz-traefik-tailnet
+            type: DirectoryOrCreate
+        - name: traefik-tailnet-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
       additionalContainers:
         - name: cloudflared
           image: cloudflare/cloudflared:2026.8.2
@@ -91,6 +101,78 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+        - name: tailscale
+          image: tailscale/tailscale:v1.88.4
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: traefik-tailnet-auth
+                  key: authkey
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: TS_HOSTNAME
+              value: traefik-$(NODE_NAME)
+            - name: TS_EXTRA_ARGS
+              value: --login-server=https://headscale.levizitting.com --accept-routes=false
+            - name: TS_ACCEPT_DNS
+              value: "false"
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_STATE_DIR
+              value: /var/lib/tailscale
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_AUTH_ONCE
+              value: "true"
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          # The sidecar shares Traefik's network namespace, but needs no API token.
+          volumeMounts:
+            - name: cloudflared-no-api-token
+              mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              readOnly: true
+            - name: traefik-tailnet-state
+              mountPath: /var/lib/tailscale
+            - name: traefik-tailnet-tun
+              mountPath: /dev/net/tun
+          ports:
+            - name: tailnet-udp
+              containerPort: 41641
+              protocol: UDP
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -ec
+                - 'tailscale status --json | grep -Eq ''"BackendState"[[:space:]]*:[[:space:]]*"Running"'''
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -ec
+                - 'tailscale status --json | grep -Eq ''"BackendState"[[:space:]]*:[[:space:]]*"Running"'''
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
     updateStrategy:
       type: RollingUpdate
       rollingUpdate:
