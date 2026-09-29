@@ -7,4 +7,3 @@ resources:
   - traefik-tailnet-auth.yaml
   - traefik-ingress-policy.yaml
   - traefik-dashboard-ingress
-  - visitor-ip-probe
