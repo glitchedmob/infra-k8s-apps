@@ -39,7 +39,7 @@ spec:
               app.kubernetes.io/component: frontend
       containers:
         - name: frontend
-          image: codewithcj/sparkyfitness:v1.6.4
+          image: codewithcj/sparkyfitness:v1.7.3
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 101
@@ -56,7 +56,7 @@ spec:
             - name: SPARKY_FITNESS_FRONTEND_URL
               value: https://sparky.levizitting.com
             - name: SPARKY_FITNESS_SERVER_HOST
-              value: sparky-server
+              value: sparky-server.sparky.svc.cluster.local
             - name: SPARKY_FITNESS_SERVER_PORT
               value: "3010"
           startupProbe:

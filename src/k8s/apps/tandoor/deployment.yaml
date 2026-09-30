@@ -18,7 +18,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: tandoor
-          image: vabene1111/recipes:2.6.13
+          image: vabene1111/recipes:2.6.15
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
