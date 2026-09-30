@@ -4,7 +4,8 @@ metadata:
   name: crowdsec
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    # Loki starts in wave 4; the log analyzer needs it before becoming healthy.
+    argocd.argoproj.io/sync-wave: "5"
     infra.levizitting.com/health-gate: "true"
 spec:
   project: platform
@@ -23,17 +24,23 @@ spec:
               - secretRef:
                   name: crowdsec-bouncer-key
           agent:
+            # One analyzer shares detection buckets across all Traefik replicas.
+            isDeployment: true
+            replicas: 1
+            strategy:
+              type: Recreate
+            hostVarLog: false
             additionalAcquisition:
-              - source: file
-                filenames:
-                  - /var/log/containers/traefik-*_kube-system_traefik-*.log
-                force_inotify: true
+              - source: loki
+                url: http://loki.observability.svc.cluster.local:3100
+                query: '{namespace="kube-system", container="traefik"}'
+                limit: 1000
+                wait_for_ready: 1m
+                max_failure_duration: 5m
                 labels:
-                  type: containerd
-                  program: traefik
+                  # Alloy removes the CRI envelope before sending logs to Loki.
+                  type: traefik
             env:
-              - name: PARSERS
-                value: crowdsecurity/cri-logs
               - name: COLLECTIONS
                 value: crowdsecurity/traefik
           appsec:

@@ -121,7 +121,8 @@ loki.process "parse_logs" {
 	}
 
 	stage.match {
-		selector = "{status_class=~\"2|3\"}"
+		// CrowdSec needs all Traefik access logs, including successful requests.
+		selector = "{status_class=~\"2|3\", container!=\"traefik\"}"
 
 		stage.sampling {
 			rate                = 0.1
