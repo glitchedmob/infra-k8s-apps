@@ -8,7 +8,7 @@ spec:
     deployment:
       replicas: 3
       podAnnotations:
-        secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth
+        secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth,crowdsec-bouncer-key
       additionalVolumes:
         - name: cloudflared-no-api-token
           emptyDir:
@@ -191,6 +191,15 @@ spec:
                 app.kubernetes.io/instance: traefik-kube-system
                 app.kubernetes.io/name: traefik
             topologyKey: kubernetes.io/hostname
+    experimental:
+      plugins:
+        bouncer:
+          moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+          version: v1.7.1
+    volumes:
+      - name: crowdsec-bouncer-key
+        mountPath: /etc/traefik/crowdsec
+        type: secret
     ports:
       web:
         asDefault: true
@@ -203,6 +212,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
       cloudflared:
         # Tunnel origin uses traefik.levizitting.com for SNI and the mounted CA.
         port: 9443
@@ -219,6 +229,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
           tls:
             enabled: true
         transport:
@@ -229,6 +240,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
         # Only the public edge may supply a PROXY-protocol visitor address.
         proxyProtocol:
           trustedIPs:
@@ -252,3 +264,8 @@ spec:
       access:
         enabled: true
         format: json
+        fields:
+          headers:
+            defaultmode: drop
+            names:
+              User-Agent: keep
