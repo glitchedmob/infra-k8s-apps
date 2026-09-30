@@ -21,5 +21,7 @@ spec:
       crowdsecAppsecEnabled: true
       crowdsecAppsecHost: crowdsec-appsec-service.crowdsec.svc.cluster.local:7422
       crowdsecAppsecFailureBlock: true
+      # Inspect headers and URI when HTTP/2+ bodies cannot be buffered.
+      crowdsecAppsecUnreadableBodyBlock: false
       # Keep apps reachable during AppSec outages.
       crowdsecAppsecUnreachableBlock: false
