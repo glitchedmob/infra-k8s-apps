@@ -8,47 +8,50 @@ metadata:
     infra.levizitting.com/health-gate: "true"
 spec:
   project: platform
-  source:
-    chart: crowdsec
-    repoURL: https://crowdsecurity.github.io/helm-charts
-    targetRevision: 0.24.2
-    helm:
-      values: |
-        container_runtime: containerd
-        config:
-          simulation.yaml: |
-            simulation: true
-        lapi:
-          envFrom:
-            - secretRef:
-                name: crowdsec-bouncer-key
-        agent:
-          additionalAcquisition:
-            - source: file
-              filenames:
-                - /var/log/containers/traefik-*_kube-system_traefik-*.log
-              force_inotify: true
-              labels:
-                type: containerd
-                program: traefik
-          env:
-            - name: PARSERS
-              value: crowdsecurity/cri-logs
-            - name: COLLECTIONS
-              value: crowdsecurity/traefik
-        appsec:
-          enabled: true
-          replicas: 2
-          acquisitions:
-            - source: appsec
-              listen_addr: "0.0.0.0:7422"
-              path: /
-              appsec_config: crowdsecurity/appsec-default
-              labels:
-                type: appsec
-          env:
-            - name: COLLECTIONS
-              value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+  sources:
+    - chart: crowdsec
+      repoURL: https://crowdsecurity.github.io/helm-charts
+      targetRevision: 0.24.2
+      helm:
+        values: |
+          container_runtime: containerd
+          config:
+            simulation.yaml: |
+              simulation: true
+          lapi:
+            envFrom:
+              - secretRef:
+                  name: crowdsec-bouncer-key
+          agent:
+            additionalAcquisition:
+              - source: file
+                filenames:
+                  - /var/log/containers/traefik-*_kube-system_traefik-*.log
+                force_inotify: true
+                labels:
+                  type: containerd
+                  program: traefik
+            env:
+              - name: PARSERS
+                value: crowdsecurity/cri-logs
+              - name: COLLECTIONS
+                value: crowdsecurity/traefik
+          appsec:
+            enabled: true
+            replicas: 2
+            acquisitions:
+              - source: appsec
+                listen_addr: "0.0.0.0:7422"
+                path: /
+                appsec_config: crowdsecurity/appsec-default
+                labels:
+                  type: appsec
+            env:
+              - name: COLLECTIONS
+                value: "crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-generic-rules"
+    - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
+      path: src/k8s/platform/services/crowdsec
+      targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: crowdsec
