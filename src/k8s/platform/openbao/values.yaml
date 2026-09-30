@@ -3,7 +3,10 @@ injector:
 csi:
   enabled: false
 server:
-  updateStrategyType: RollingUpdate
+  image:
+    tag: "2.7.0"
+  # Replace standby members before the active member during Raft upgrades.
+  updateStrategyType: OnDelete
   podManagementPolicy: Parallel
   ha:
     enabled: true
