@@ -7,14 +7,19 @@ spec:
   plugin:
     bouncer:
       enabled: true
-      # Direct HTTPS through the public edge does not preserve the visitor IP.
-      # Do not enforce IP decisions until both ingress paths have verified client IPs.
+      # AppSec inspects requests without enforcing LAPI IP decisions.
       crowdsecMode: appsec
-      # The preceding middleware removes this header; use the socket peer only.
-      forwardedHeadersCustomName: X-Crowdsec-Verified-Client-IP
+      # Traefik validates forwarding peers before the shared header sanitizer.
+      # The bouncer scans XFF from the right, matching the Traefik log parser.
+      forwardedHeadersCustomName: X-Forwarded-For
+      forwardedHeadersTrustedIPs:
+        - 100.64.0.10/32
+        - 127.0.0.1/32
+      crowdsecLapiHost: crowdsec-service.crowdsec.svc.cluster.local:8080
       crowdsecLapiKeyFile: /etc/traefik/crowdsec/BOUNCER_KEY_traefik
+      crowdsecAppsecKeyFile: /etc/traefik/crowdsec/BOUNCER_KEY_traefik
       crowdsecAppsecEnabled: true
       crowdsecAppsecHost: crowdsec-appsec-service.crowdsec.svc.cluster.local:7422
       crowdsecAppsecFailureBlock: true
-      # Keep apps reachable during AppSec outages; alert on AppSec availability.
+      # Keep apps reachable during AppSec outages.
       crowdsecAppsecUnreachableBlock: false

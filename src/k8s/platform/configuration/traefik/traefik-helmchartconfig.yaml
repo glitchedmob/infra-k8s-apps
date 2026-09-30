@@ -200,8 +200,6 @@ spec:
       - name: crowdsec-bouncer-key
         mountPath: /etc/traefik/crowdsec
         type: secret
-    additionalArguments:
-      - --entrypoints.websecure.http.middlewares=kube-system-crowdsec-strip-client-header@kubernetescrd,kube-system-crowdsec-appsec@kubernetescrd
     ports:
       web:
         asDefault: true
@@ -214,6 +212,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
       cloudflared:
         # Tunnel origin uses traefik.levizitting.com for SNI and the mounted CA.
         port: 9443
@@ -230,6 +229,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
           tls:
             enabled: true
         transport:
@@ -240,6 +240,7 @@ spec:
         http:
           middlewares:
             - kube-system-client-headers@kubernetescrd
+            - kube-system-crowdsec-appsec@kubernetescrd
         # Only the public edge may supply a PROXY-protocol visitor address.
         proxyProtocol:
           trustedIPs:
@@ -263,3 +264,8 @@ spec:
       access:
         enabled: true
         format: json
+        fields:
+          headers:
+            defaultmode: drop
+            names:
+              User-Agent: keep
