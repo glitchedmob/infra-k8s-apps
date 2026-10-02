@@ -1,0 +1,47 @@
+{
+  "mcpServers": {},
+  "users": [],
+  "systemConfig": {
+    "routing": {
+      "skipAuth": false,
+      "enableBearerAuth": true,
+      "enableGlobalRoute": true,
+      "enableGroupNameRoute": true
+    },
+    "install": {
+      "baseUrl": "https://mcp.levizitting.com"
+    },
+    "oauthServer": {
+      "enabled": true,
+      "requireState": true,
+      "allowedScopes": [
+        "read",
+        "write"
+      ],
+      "requireClientSecret": false,
+      "dynamicRegistration": {
+        "enabled": true,
+        "requiresAuthentication": false,
+        "allowedGrantTypes": [
+          "authorization_code",
+          "refresh_token"
+        ]
+      },
+      "clientIdMetadata": {
+        "enabled": false
+      }
+    },
+    "discovery": {
+      "enabled": false
+    },
+    "smartRouting": {
+      "enabled": false
+    },
+    "toolResultCompression": {
+      "enabled": false
+    },
+    "activityLog": {
+      "storeToolPayload": false
+    }
+  }
+}

@@ -1,0 +1,172 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcphub
+  annotations:
+    secret.reloader.stakater.com/reload: mcphub-runtime,mcphub-db-app,mcphub-db-ca
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mcphub
+  template:
+    metadata:
+      annotations:
+        secret.reloader.stakater.com/reload: mcphub-runtime,mcphub-db-app,mcphub-db-ca
+      labels:
+        app.kubernetes.io/name: mcphub
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mcphub
+          image: docker.io/samanhappy/mcphub:1.0.44@sha256:6796e688694fdc1b3c09dd56aa71462c24d7577a268a47f24684a5217185a71c
+          imagePullPolicy: IfNotPresent
+          workingDir: /app
+          command:
+            - sh
+            - -ec
+            - |
+              cp /bootstrap/mcp_settings.json /app/data/mcp_settings.json
+              node /bootstrap/initialize.mjs
+              exec node dist/index.js
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 3000
+          # Require each key; initialize.mjs also rejects empty values before
+          # upstream can generate passwords, signing secrets or key files.
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: JWT_SECRET
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: BETTER_AUTH_SECRET
+            - name: MCPHUB_CREDENTIAL_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: MCPHUB_CREDENTIAL_ENCRYPTION_KEY
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: ADMIN_PASSWORD
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-runtime
+                  key: OIDC_CLIENT_SECRET
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mcphub-db-app
+                  key: uri
+            # pg 8.22 treats sslmode=require in CNPG's URI as verify-full.
+            # Trust CNPG's CA rather than disabling certificate verification.
+            - name: NODE_EXTRA_CA_CERTS
+              value: /etc/mcphub-db-ca/ca.crt
+            - name: USE_DB
+              value: "true"
+            - name: MCPHUB_SETTING_PATH
+              value: /app/data/mcp_settings.json
+            - name: BETTER_AUTH_ENABLED
+              value: "true"
+            - name: BETTER_AUTH_OIDC_ENABLED
+              value: "true"
+            - name: BETTER_AUTH_OIDC_PROVIDER_ID
+              value: zitadel
+            - name: BETTER_AUTH_OIDC_DISCOVERY_URL
+              value: https://id.levizitting.com/.well-known/openid-configuration
+            - name: BETTER_AUTH_OIDC_PKCE
+              value: "true"
+            - name: BETTER_AUTH_OIDC_TRUST_EMAIL
+              value: "false"
+            - name: BETTER_AUTH_GOOGLE_ENABLED
+              value: "false"
+            - name: BETTER_AUTH_GITHUB_ENABLED
+              value: "false"
+            - name: BETTER_AUTH_URL
+              value: https://mcp.levizitting.com
+            - name: BETTER_AUTH_TRUSTED_ORIGINS
+              value: https://mcp.levizitting.com
+            - name: NODE_ENV
+              value: production
+            - name: TRUST_PROXY
+              value: "1"
+          volumeMounts:
+            - name: bootstrap
+              mountPath: /bootstrap
+              readOnly: true
+            - name: db-ca
+              mountPath: /etc/mcphub-db-ca
+              readOnly: true
+            - name: data
+              mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+      volumes:
+        - name: bootstrap
+          configMap:
+            name: mcphub-bootstrap
+        - name: db-ca
+          secret:
+            secretName: mcphub-db-ca
+            items:
+              - key: ca.crt
+                path: ca.crt
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
