@@ -1,0 +1,38 @@
+- op: replace
+  path: /metadata/name
+  value: mcphub-backup
+- op: replace
+  path: /metadata/labels/backup.k8up.io~1app
+  value: mcphub
+- op: replace
+  path: /spec/fileExtension
+  value: .dump
+- op: replace
+  path: /spec/backupCommand
+  value: >-
+    sh -ec 'pg_dump
+    --host=mcphub-db-rw
+    --username=mcphub
+    --dbname=mcphub
+    --format=custom
+    --no-owner
+    --no-privileges'
+- op: replace
+  path: /spec/pod/spec/serviceAccountName
+  value: mcphub-backup
+- op: replace
+  path: /spec/pod/spec/containers/0/image
+  value: ghcr.io/cloudnative-pg/postgresql:18.6-system-trixie
+- op: add
+  path: /spec/pod/spec/containers/0/env
+  value:
+    - name: PGPASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mcphub-db-app
+          key: password
+    - name: PGSSLMODE
+      value: require
+- op: add
+  path: /spec/pod/spec/automountServiceAccountToken
+  value: false
