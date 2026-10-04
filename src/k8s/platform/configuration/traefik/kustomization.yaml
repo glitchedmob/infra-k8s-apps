@@ -3,9 +3,6 @@ kind: Kustomization
 resources:
   - traefik-helmchartconfig.yaml
   - middleware-client-headers.yaml
-  - cloudflared-token.yaml
-  - traefik-tailnet-auth.yaml
   - traefik-ingress-policy.yaml
   - middleware-crowdsec.yaml
-  - externalsecret-crowdsec.yaml
   - traefik-dashboard-ingress
