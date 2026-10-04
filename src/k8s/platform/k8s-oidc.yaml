@@ -7,6 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-2"
     infra.levizitting.com/health-gate: "true"
     infra.levizitting.com/issuer-operation-gate: "true"
+    infra.levizitting.com/issuer-input-fingerprint: "b1bf362ff001b1eec0233bd2cc3aa7dee5c37631"
 spec:
   project: platform
   source:
