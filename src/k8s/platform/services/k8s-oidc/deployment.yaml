@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: oidc-discovery-proxy
   namespace: k8s-oidc
+  annotations:
+    infra.levizitting.com/issuer-input-fingerprint: "b1bf362ff001b1eec0233bd2cc3aa7dee5c37631"
 spec:
   replicas: 1
   selector:
