@@ -12,27 +12,6 @@ data:
       forward . 10.255.255.1
     }
 ---
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: dns-gateway-auth-key
-  namespace: kube-system
-  annotations:
-    argocd.argoproj.io/sync-options: Prune=false
-    argocd.argoproj.io/sync-wave: "-2"
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: aws-ssm
-    kind: ClusterSecretStore
-  target:
-    name: dns-gateway-auth-key
-    creationPolicy: Owner
-  data:
-    - secretKey: authkey
-      remoteRef:
-        key: /homelab/headscale/pods/lz/dns-gateway-auth-key
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
