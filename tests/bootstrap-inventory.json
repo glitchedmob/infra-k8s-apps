@@ -1,0 +1,230 @@
+{
+  "v1/ServiceAccount/external-secrets/eso-argo-workflows-reader": {
+    "moving": true,
+    "sha256": "b93649cc54337da15ebda9e859d72fbe10e1218891fea9af655ebb3385dae207"
+  },
+  "v1/ServiceAccount/external-secrets/eso-argocd-reader": {
+    "moving": true,
+    "sha256": "63e3bbcc53f80abd13b5ce50d0f607e6e49b2b87a268b4e03cfbda9d864c9544"
+  },
+  "v1/ServiceAccount/external-secrets/eso-cache-reader": {
+    "moving": true,
+    "sha256": "2584bdcb3bd5afd67417289a43dc250fe69592fcb652a0e6ae24c58258048fd4"
+  },
+  "v1/ServiceAccount/external-secrets/eso-dex-reader": {
+    "moving": true,
+    "sha256": "0b77e533bf572a9ba8fd5ebd6651eb4628fed057274f908a437f9442bb2a5522"
+  },
+  "v1/ServiceAccount/external-secrets/eso-grafana-reader": {
+    "moving": true,
+    "sha256": "dd7f69b7f0e94d6633698232a11a5de003c2949d224ed569b345ac0414ee0648"
+  },
+  "v1/ServiceAccount/external-secrets/eso-oauth2-proxy-reader": {
+    "moving": true,
+    "sha256": "5780f49130f84b9371d617db3d7afc8327fdb217f5c737812e48dc17055ab007"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-argo-workflows-reader": {
+    "moving": true,
+    "sha256": "c58a1f2e3f426715c28a24a17c10d24faa49bcbbca12f8ba725b2589b7c6e029"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-argocd-reader": {
+    "moving": true,
+    "sha256": "ec5137a68ec1f99442b9795eb79083460309b863c8dc1c924eab9cb193bf4f22"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-cache-reader": {
+    "moving": true,
+    "sha256": "06a6f2dab710bce82cb3a71f74f1a39917cda5f3b87d7eb36c7bb520dbd9c8f9"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-dex-reader": {
+    "moving": true,
+    "sha256": "aeea6eec817e20bb10aa72b5e6d8d0df24afcc009fd028a52de1e3f9a2cc80e8"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-grafana-reader": {
+    "moving": true,
+    "sha256": "73604f93eaf66b62538faada23e96efe15ccbc59da1c05478c5553ce2d43afa0"
+  },
+  "rbac.authorization.k8s.io/v1/Role/external-secrets/eso-oauth2-proxy-reader": {
+    "moving": true,
+    "sha256": "af686be14e56364e1308d68d2911648036de0eaac785d78dce1d5d83e11bf217"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-argo-workflows-reader": {
+    "moving": true,
+    "sha256": "319540bae4db4175f1b9d7285138b125c054ac14539d68837d0782a30143ffc0"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-argocd-reader": {
+    "moving": true,
+    "sha256": "2715f16a3415d6441145fd23d99a458311f6d7cffb868bcdf53acac5bf339934"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-cache-reader": {
+    "moving": true,
+    "sha256": "3a2a72296545c6ce534d1d292078e9d68688e23cc51f678262aa8f8655c4ba19"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-dex-reader": {
+    "moving": true,
+    "sha256": "e86feabf0bff02bdcc29815b124e38399b85cf0a4e1208d47aab58fcf366eae0"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-grafana-reader": {
+    "moving": true,
+    "sha256": "3674b009631b8c79d63ac291e20871ccb839761eb07df1662d62ef76cea22d8e"
+  },
+  "rbac.authorization.k8s.io/v1/RoleBinding/external-secrets/eso-oauth2-proxy-reader": {
+    "moving": true,
+    "sha256": "34c8bc3a42dcd759f7c7bd822d482e1b68067acc1f8ae23a235787c34d7b7d6a"
+  },
+  "v1/ConfigMap/kube-system/coredns-custom": {
+    "moving": false,
+    "sha256": "d4d561b30f554cf4ae250f7c4c0595f96035c419d10239e04964ff3202a97692"
+  },
+  "v1/ConfigMap/kube-system/dns-gateway": {
+    "moving": false,
+    "sha256": "e3f1cc21e8cb538fb5395e7551bb76432070890400160d2423a75a6cf317759d"
+  },
+  "v1/Service/kube-system/dns-gateway": {
+    "moving": false,
+    "sha256": "d157cbf9afc3b243e7d30c7ff7cf5a336dfa81e5567e407a71cbdb4175ae4062"
+  },
+  "v1/Service/kube-system/dns-gateway-headless": {
+    "moving": false,
+    "sha256": "435cebcffcae657ce587c6be2cbdfc389c1afba6db8e80f9ddbd78d1afd50c68"
+  },
+  "apps/v1/Deployment/kube-system/coredns": {
+    "moving": false,
+    "sha256": "911c145dcca03212bc3b748137c4b3d5525945558f0d9d5c411b7529e412fc1f"
+  },
+  "apps/v1/StatefulSet/kube-system/dns-gateway": {
+    "moving": false,
+    "sha256": "0cd41ecf39205d2a1e0e9257744e4cfdfdb1b5ec6cc8a4904c71497fbb6a6a68"
+  },
+  "policy/v1/PodDisruptionBudget/kube-system/coredns": {
+    "moving": false,
+    "sha256": "c338f63ae2f38a4b940be4872b75b45d9c2b3255c98f45b91ac444baa0cc6f87"
+  },
+  "admissionregistration.k8s.io/v1/MutatingAdmissionPolicy//aws-role-arn-expansion.infra.levizitting.com": {
+    "moving": false,
+    "sha256": "6de1be52a008ace9d53a54680288d5f2951f4b4db94539bd017d0a42a98eebfd"
+  },
+  "admissionregistration.k8s.io/v1/MutatingAdmissionPolicyBinding//aws-role-arn-expansion.infra.levizitting.com": {
+    "moving": false,
+    "sha256": "1d01f0cb31301cc8388cc2df9b4d1dc1a77d1c0826cb5063bcf0431aaebc04ff"
+  },
+  "cert-manager.io/v1/Certificate/cert-manager/levizitting-root-ca": {
+    "moving": false,
+    "sha256": "028df5fca12d272306d8df4111581c389946ce65b76bd21b7bea2835a057eebb"
+  },
+  "cert-manager.io/v1/Certificate/kube-system/traefik-dashboard-tls": {
+    "moving": false,
+    "sha256": "4a882bee5dba2dac2f3fae5aa62aca340fff6282ba030ca3bf546e521f364c73"
+  },
+  "cert-manager.io/v1/ClusterIssuer//letsencrypt-prod": {
+    "moving": false,
+    "sha256": "11f12be5055b163360996be3d83a8985495f11e9acfd1071ad009a061ef3cd5a"
+  },
+  "cert-manager.io/v1/ClusterIssuer//levizitting-ca": {
+    "moving": false,
+    "sha256": "dfd32ce926829f8869529cf14fa0f47f81e21c8fefadbc1aa8c161f25a27a5ac"
+  },
+  "cert-manager.io/v1/ClusterIssuer//selfsigned-issuer": {
+    "moving": false,
+    "sha256": "cec3050b410eab56b3b9fb9983e07a903bf148ce03bdda2dbcfccd4032f46f8b"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//argo-workflows-k8s": {
+    "moving": true,
+    "sha256": "189300d61fc6783eabcc5a06ee8b2b433359c16b2515c1aa8bc09bf5192f81d1"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//argocd-k8s": {
+    "moving": true,
+    "sha256": "3a021a5d425fbd710ec93931208942c8f89ef963c9397df773e057a77685c824"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//aws-ssm": {
+    "moving": true,
+    "sha256": "3a296fffc387b494929aad1fdb49cb901d117ad284edaf8fd269c529c3817f00"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//dex-k8s": {
+    "moving": true,
+    "sha256": "0c1969d9a8390b9f2f247f2918fe9e4d131aa204a73c3349f1b24a46d49bf431"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//grafana-k8s": {
+    "moving": true,
+    "sha256": "3b8ea77aba7add6e751ed03bc28728eb4f0c5dddecc75cc2d40a19368e92fe9f"
+  },
+  "external-secrets.io/v1/ClusterSecretStore//oauth2-proxy-k8s": {
+    "moving": true,
+    "sha256": "310c54009e13f3ae2943acd2fd9cae8614f73e540273c8f78d6070cc654f59f4"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/argo-workflows-secrets": {
+    "moving": true,
+    "sha256": "6dc015b7b729b264855e37d036138869c3e0b1159ad300d67bec31768768fbac"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/argocd-secrets": {
+    "moving": true,
+    "sha256": "3b4eb3219c67b940adb490bb46d060b70f7a80a3008b89975b0fc6ccbf0a160d"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/dex-secrets": {
+    "moving": true,
+    "sha256": "d23ed9328560c5e04bad1ea5cb6e0d4fbcfbc5bd2f212dc52ed89cd88aba1ed8"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/grafana-secrets": {
+    "moving": true,
+    "sha256": "43b7caa577feed7c3a032c5d703f3acb34ea765b4bc2194ec630b5a810096584"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/oauth2-proxy-secrets": {
+    "moving": true,
+    "sha256": "0224e3c604976c8981abe8e1962769d71c5c4a1097a187e55c1e1d7a7cb744d7"
+  },
+  "external-secrets.io/v1/ExternalSecret/external-secrets/ssm-cache": {
+    "moving": true,
+    "sha256": "57b016fe43b1c66d0e79f0a0abc520aed74a04167bae66da9adaab24067c7993"
+  },
+  "external-secrets.io/v1/ExternalSecret/kube-system/cloudflared-token": {
+    "moving": true,
+    "sha256": "1bdc06d92f69336a715d601c4cc7d48efc5a89b25d33754ee535316b19524638"
+  },
+  "external-secrets.io/v1/ExternalSecret/kube-system/crowdsec-bouncer-key": {
+    "moving": true,
+    "sha256": "89d98f04595180a774d6404e7cd0915b469479fec9dac4d44674f8c8b520b57e"
+  },
+  "external-secrets.io/v1/ExternalSecret/kube-system/dns-gateway-auth-key": {
+    "moving": true,
+    "sha256": "7d566b046a3b1fdb9e001922b69838c70294f2bca5a39a6ba63f640ca2730833"
+  },
+  "external-secrets.io/v1/ExternalSecret/kube-system/traefik-tailnet-auth": {
+    "moving": true,
+    "sha256": "da912fe5de4b32af7e27b2ed8658367fbc02975dde00f2b983c5cac0f58bcb58"
+  },
+  "external-secrets.io/v1/SecretStore/external-secrets/cache-k8s": {
+    "moving": true,
+    "sha256": "fea64fb9cee672d353e00920916949bbe6b7473be65868f98def6dc733acd16e"
+  },
+  "helm.cattle.io/v1/HelmChartConfig/kube-system/traefik": {
+    "moving": false,
+    "sha256": "0549307edc828d6481ca067aa49d19f1183becf11a7748dc49888ecdc153f85a"
+  },
+  "networking.k8s.io/v1/NetworkPolicy/kube-system/traefik-ingress": {
+    "moving": false,
+    "sha256": "1b991ee1cc1ac835c2e84492012ead611442122e206c3b3055ff8ed1dd361df2"
+  },
+  "traefik.io/v1alpha1/IngressRoute/kube-system/traefik-dashboard": {
+    "moving": false,
+    "sha256": "ff163f4bc75ee2a478cd7356ff99a624e2f4af06964a80044ee48ea987302309"
+  },
+  "traefik.io/v1alpha1/IngressRoute/kube-system/traefik-dashboard-redirect": {
+    "moving": false,
+    "sha256": "ba7206733e80b30dbc8967fa093af8e95b479be62e87669efecbe55226eb1371"
+  },
+  "traefik.io/v1alpha1/Middleware/kube-system/client-headers": {
+    "moving": false,
+    "sha256": "885739229a1bd2c573fae05d22ad010b8271635724d020779803407d8d01a8c6"
+  },
+  "traefik.io/v1alpha1/Middleware/kube-system/crowdsec-appsec": {
+    "moving": false,
+    "sha256": "828c73c4a280e5d3b9951bb094b38aa8e3d412c4282643963b5a7442b78114ed"
+  },
+  "traefik.io/v1alpha1/Middleware/kube-system/traefik-dashboard-https-redirect": {
+    "moving": false,
+    "sha256": "989b0a60145c72d8dea67e340aadf0c3673c9433c34c4533dc8731c2eb4151d9"
+  },
+  "trust.cert-manager.io/v1alpha1/Bundle//levizitting-ca-bundle": {
+    "moving": false,
+    "sha256": "2443fa6e4d97510290e32ae9b51f6d5cc361fed4aeb210fa1323428c61b3a4b5"
+  }
+}
