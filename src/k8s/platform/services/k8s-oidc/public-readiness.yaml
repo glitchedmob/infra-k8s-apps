@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: oidc-public-readiness
+  name: oidc-public-readiness-b1bf362ff001b1eec0233bd2cc3aa7dee5c37631
   annotations:
     argocd.argoproj.io/hook: PostSync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
