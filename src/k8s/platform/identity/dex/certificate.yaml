@@ -5,7 +5,7 @@ metadata:
   namespace: dex
 spec:
   secretName: dex-tls
-  duration: 8760h
+  duration: 2160h
   renewBefore: 720h
   issuerRef:
     name: levizitting-ca

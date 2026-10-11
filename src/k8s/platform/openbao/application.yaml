@@ -28,11 +28,6 @@ spec:
       name: openbao-recovery-state
       jsonPointers:
         - /data
-    - group: cert-manager.io
-      kind: Certificate
-      jsonPointers:
-        - /spec/duration
-        - /spec/renewBefore
   syncPolicy:
     automated:
       prune: true

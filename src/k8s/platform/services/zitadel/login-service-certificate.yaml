@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
   secretName: zitadel-login-service-key
-  duration: 8760h
+  duration: 2160h
   renewBefore: 720h
   privateKey:
     algorithm: RSA

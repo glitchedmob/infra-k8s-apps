@@ -91,11 +91,6 @@ spec:
       namespace: argo-workflows
       jsonPointers:
         - /data
-    - group: cert-manager.io
-      kind: Certificate
-      jsonPointers:
-        - /spec/duration
-        - /spec/renewBefore
   syncPolicy:
     automated:
       prune: true

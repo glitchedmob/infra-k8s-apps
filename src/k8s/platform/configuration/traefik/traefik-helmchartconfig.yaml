@@ -7,16 +7,17 @@ spec:
   valuesContent: |-
     deployment:
       replicas: 3
-      podAnnotations:
+      annotations:
         secret.reloader.stakater.com/reload: cloudflared-token,traefik-tailnet-auth,crowdsec-bouncer-key
+        configmap.reloader.stakater.com/reload: levizitting-ca-bundle
       additionalVolumes:
         - name: cloudflared-no-api-token
           emptyDir:
             medium: Memory
-        # Only the public CA certificate is mounted, not the TLS private key.
+        # Trust follows the issuer CA, not a copy in a leaf certificate Secret.
         - name: cloudflared-origin-ca
-          secret:
-            secretName: traefik-dashboard-tls
+          configMap:
+            name: levizitting-ca-bundle
             items:
               - key: ca.crt
                 path: ca.crt
