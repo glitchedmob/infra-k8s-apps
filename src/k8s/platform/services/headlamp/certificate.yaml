@@ -5,7 +5,7 @@ metadata:
   namespace: headlamp
 spec:
   secretName: headlamp-tls
-  duration: 8760h
+  duration: 2160h
   renewBefore: 720h
   issuerRef:
     name: levizitting-ca

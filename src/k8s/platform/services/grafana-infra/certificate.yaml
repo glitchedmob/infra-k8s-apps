@@ -7,7 +7,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   secretName: grafana-tls
-  duration: 8760h
+  duration: 2160h
   renewBefore: 720h
   issuerRef:
     name: levizitting-ca

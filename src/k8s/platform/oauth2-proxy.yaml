@@ -88,12 +88,6 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: oauth2-proxy
-  ignoreDifferences:
-    - group: cert-manager.io
-      kind: Certificate
-      jsonPointers:
-        - /spec/duration
-        - /spec/renewBefore
   syncPolicy:
     automated:
       prune: true

@@ -113,12 +113,6 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: dex
-  ignoreDifferences:
-    - group: cert-manager.io
-      kind: Certificate
-      jsonPointers:
-        - /spec/duration
-        - /spec/renewBefore
   syncPolicy:
     automated:
       prune: true

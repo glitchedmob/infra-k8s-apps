@@ -5,6 +5,8 @@ metadata:
   namespace: cert-manager
 spec:
   isCA: true
+  duration: 87600h
+  renewBefore: 8760h
   commonName: levizitting.com Root CA
   subject:
     organizations:
@@ -13,6 +15,7 @@ spec:
     - levizitting.com
   secretName: levizitting-root-ca
   privateKey:
+    rotationPolicy: Never
     algorithm: ECDSA
     size: 256
   issuerRef:
