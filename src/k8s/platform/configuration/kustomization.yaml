@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - aws-role-arn-expansion
   - cert-manager-issuers
+  - cnpg
   - external-secrets-stores
   - external-secrets-cache
   - trust-manager
