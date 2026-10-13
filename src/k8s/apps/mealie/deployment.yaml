@@ -95,8 +95,6 @@ spec:
               value: "1"
             - name: ALLOW_SIGNUP
               value: "false"
-            # Seeded admin bootstrap is local-only via port-forward and the API.
-            # Promote/link the intended OIDC administrator and disable the seeded account.
             - name: ALLOW_PASSWORD_LOGIN
               value: "false"
             - name: OIDC_AUTH_ENABLED
@@ -105,6 +103,13 @@ spec:
               value: "true"
             - name: OIDC_REQUIRES_EMAIL_VERIFICATION
               value: "true"
+            # ZITADEL emits the current application project's roles as keys in the claim.
+            - name: OIDC_GROUPS_CLAIM
+              value: urn:zitadel:iam:org:project:roles
+            - name: OIDC_USER_GROUP
+              value: access
+            - name: OIDC_ADMIN_GROUP
+              value: admin
             - name: OIDC_PROVIDER_NAME
               value: ZITADEL
             - name: OIDC_AUTO_REDIRECT
