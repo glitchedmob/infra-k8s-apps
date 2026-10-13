@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: dns-gateway
   namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 data:
   Corefile: |
     .:53 {
@@ -18,6 +20,7 @@ metadata:
   name: dns-gateway-auth-key
   namespace: kube-system
   annotations:
+    argocd.argoproj.io/sync-options: Prune=false
     argocd.argoproj.io/sync-wave: "-2"
 spec:
   refreshInterval: 1h
@@ -37,6 +40,8 @@ kind: StatefulSet
 metadata:
   name: dns-gateway
   namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
   replicas: 2
   serviceName: dns-gateway-headless
@@ -178,6 +183,8 @@ kind: Service
 metadata:
   name: dns-gateway-headless
   namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
   clusterIP: None
   selector:
@@ -195,6 +202,8 @@ kind: Service
 metadata:
   name: dns-gateway
   namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
   type: ClusterIP
   clusterIP: 10.55.0.53
