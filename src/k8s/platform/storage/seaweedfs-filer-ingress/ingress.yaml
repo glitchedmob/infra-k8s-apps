@@ -5,6 +5,8 @@ metadata:
   namespace: seaweedfs
   annotations:
     cert-manager.io/cluster-issuer: levizitting-ca
+    cert-manager.io/duration: "2160h"
+    cert-manager.io/renew-before: "720h"
     traefik.ingress.kubernetes.io/router.middlewares: seaweedfs-seaweedfs-filer-https-redirect@kubernetescrd,oauth2-proxy-oauth2-forward-auth@kubernetescrd
 spec:
   ingressClassName: traefik
