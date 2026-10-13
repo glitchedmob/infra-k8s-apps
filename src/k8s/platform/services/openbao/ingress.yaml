@@ -5,6 +5,8 @@ metadata:
   namespace: openbao
   annotations:
     cert-manager.io/cluster-issuer: levizitting-ca
+    cert-manager.io/duration: "2160h"
+    cert-manager.io/renew-before: "720h"
     traefik.ingress.kubernetes.io/router.middlewares: openbao-openbao-https-redirect@kubernetescrd
 spec:
   ingressClassName: traefik

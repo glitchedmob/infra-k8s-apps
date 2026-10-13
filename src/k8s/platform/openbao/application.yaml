@@ -23,8 +23,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: openbao
   ignoreDifferences:
-    - group: ""
-      kind: ConfigMap
+    - kind: ConfigMap
       name: openbao-recovery-state
       jsonPointers:
         - /data
