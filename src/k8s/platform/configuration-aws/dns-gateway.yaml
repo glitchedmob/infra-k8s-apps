@@ -4,7 +4,6 @@ metadata:
   name: dns-gateway
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
     argocd.argoproj.io/sync-wave: "2"
 data:
   Corefile: |
@@ -21,7 +20,6 @@ metadata:
   name: dns-gateway
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
     argocd.argoproj.io/sync-wave: "2"
 spec:
   replicas: 2
@@ -165,7 +163,6 @@ metadata:
   name: dns-gateway-headless
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
     argocd.argoproj.io/sync-wave: "2"
 spec:
   clusterIP: None
@@ -185,7 +182,6 @@ metadata:
   name: dns-gateway
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
     argocd.argoproj.io/sync-wave: "2"
 spec:
   type: ClusterIP
