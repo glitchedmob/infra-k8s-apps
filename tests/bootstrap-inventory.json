@@ -76,15 +76,15 @@
     "sha256": "d4d561b30f554cf4ae250f7c4c0595f96035c419d10239e04964ff3202a97692"
   },
   "v1/ConfigMap/kube-system/dns-gateway": {
-    "moving": false,
+    "moving": true,
     "sha256": "e3f1cc21e8cb538fb5395e7551bb76432070890400160d2423a75a6cf317759d"
   },
   "v1/Service/kube-system/dns-gateway": {
-    "moving": false,
+    "moving": true,
     "sha256": "d157cbf9afc3b243e7d30c7ff7cf5a336dfa81e5567e407a71cbdb4175ae4062"
   },
   "v1/Service/kube-system/dns-gateway-headless": {
-    "moving": false,
+    "moving": true,
     "sha256": "435cebcffcae657ce587c6be2cbdfc389c1afba6db8e80f9ddbd78d1afd50c68"
   },
   "apps/v1/Deployment/kube-system/coredns": {
@@ -92,7 +92,7 @@
     "sha256": "911c145dcca03212bc3b748137c4b3d5525945558f0d9d5c411b7529e412fc1f"
   },
   "apps/v1/StatefulSet/kube-system/dns-gateway": {
-    "moving": false,
+    "moving": true,
     "sha256": "0cd41ecf39205d2a1e0e9257744e4cfdfdb1b5ec6cc8a4904c71497fbb6a6a68"
   },
   "policy/v1/PodDisruptionBudget/kube-system/coredns": {
@@ -109,11 +109,11 @@
   },
   "cert-manager.io/v1/Certificate/cert-manager/levizitting-root-ca": {
     "moving": false,
-    "sha256": "028df5fca12d272306d8df4111581c389946ce65b76bd21b7bea2835a057eebb"
+    "sha256": "bc16a7f9c3598f16a8a97e52d5f1b312df91237181af252b8a3f927621eaedfe"
   },
   "cert-manager.io/v1/Certificate/kube-system/traefik-dashboard-tls": {
     "moving": false,
-    "sha256": "4a882bee5dba2dac2f3fae5aa62aca340fff6282ba030ca3bf546e521f364c73"
+    "sha256": "a021a2c431fc76dec5977979a81e8f35398c87c5dea785fb01604f9956c2debf"
   },
   "cert-manager.io/v1/ClusterIssuer//letsencrypt-prod": {
     "moving": false,
@@ -197,7 +197,7 @@
   },
   "helm.cattle.io/v1/HelmChartConfig/kube-system/traefik": {
     "moving": false,
-    "sha256": "0549307edc828d6481ca067aa49d19f1183becf11a7748dc49888ecdc153f85a"
+    "sha256": "f609a89518b3217bfc090a45d7d32b53ff57ae9d10003cc0ac182b423b7426e0"
   },
   "networking.k8s.io/v1/NetworkPolicy/kube-system/traefik-ingress": {
     "moving": false,
@@ -219,12 +219,16 @@
     "moving": false,
     "sha256": "828c73c4a280e5d3b9951bb094b38aa8e3d412c4282643963b5a7442b78114ed"
   },
+  "traefik.io/v1alpha1/Middleware/kube-system/crowdsec-plugin-healthcheck": {
+    "moving": false,
+    "sha256": "7a9c5ddf85ecb60e41121ead5aed547bf39ce0b2441946b2738189abf743c3ea"
+  },
   "traefik.io/v1alpha1/Middleware/kube-system/traefik-dashboard-https-redirect": {
     "moving": false,
     "sha256": "989b0a60145c72d8dea67e340aadf0c3673c9433c34c4533dc8731c2eb4151d9"
   },
   "trust.cert-manager.io/v1alpha1/Bundle//levizitting-ca-bundle": {
     "moving": false,
-    "sha256": "2443fa6e4d97510290e32ae9b51f6d5cc361fed4aeb210fa1323428c61b3a4b5"
+    "sha256": "94fd269ed825e075f124681b78a864b6eb562896c3b133a4ce03f80f753d19d1"
   }
 }

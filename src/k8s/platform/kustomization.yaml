@@ -8,6 +8,7 @@ resources:
   - aws-pod-identity-webhook.yaml
   - bootstrap-config.yaml
   - bootstrap-aws-config.yaml
+  - bootstrap-ingress-config.yaml
   - crowdsec.yaml
   - dex.yaml
   - grafana-infra.yaml

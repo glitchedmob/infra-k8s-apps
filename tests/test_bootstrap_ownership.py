@@ -58,10 +58,12 @@ class Ownership(unittest.TestCase):
             self.assertEqual("Prune=false" in options, old["moving"] and PHASE < 3, key)
 
     def test_child_preexists_and_tracks_stable_path(self):
-        app = self.apps["bootstrap-aws-config"]
-        self.assertEqual(app["spec"]["source"]["path"], "src/k8s/platform/configuration-aws")
-        self.assertEqual(app["spec"]["source"]["targetRevision"], "main")
-        self.assertNotIn("FailOnSharedResource=true", app["spec"]["syncPolicy"].get("syncOptions", []))
+        for name, path in [("bootstrap-aws-config", "configuration-aws"),
+                           ("bootstrap-ingress-config", "configuration-ingress")]:
+            app = self.apps[name]
+            self.assertEqual(app["spec"]["source"]["path"], "src/k8s/platform/" + path)
+            self.assertEqual(app["spec"]["source"]["targetRevision"], "main")
+            self.assertNotIn("FailOnSharedResource=true", app["spec"]["syncPolicy"].get("syncOptions", []))
         if PHASE == 1:
             self.assertFalse(self.aws)
             self.assertEqual(self.apps["bootstrap-config"]["metadata"]["annotations"]["argocd.argoproj.io/sync-wave"], "1")
