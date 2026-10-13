@@ -5,3 +5,4 @@ resources:
   - external-secrets-cache
   - traefik
   - dns-gateway-auth-key.yaml
+  - dns-gateway.yaml
