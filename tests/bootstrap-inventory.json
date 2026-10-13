@@ -177,11 +177,15 @@
   },
   "external-secrets.io/v1/ExternalSecret/kube-system/cloudflared-token": {
     "moving": true,
-    "sha256": "1bdc06d92f69336a715d601c4cc7d48efc5a89b25d33754ee535316b19524638"
+    "sha256": "1bdc06d92f69336a715d601c4cc7d48efc5a89b25d33754ee535316b19524638",
+    "owner": "ingress",
+    "transferSha256": "edf83dbc251258c06f0340aea32387d8e1604d8d65db89656440ad7757dfafe4"
   },
   "external-secrets.io/v1/ExternalSecret/kube-system/crowdsec-bouncer-key": {
     "moving": true,
-    "sha256": "89d98f04595180a774d6404e7cd0915b469479fec9dac4d44674f8c8b520b57e"
+    "sha256": "89d98f04595180a774d6404e7cd0915b469479fec9dac4d44674f8c8b520b57e",
+    "owner": "ingress",
+    "transferSha256": "774d5d6f3dcf4e513db7547f4d9f8708e53eacfb0510979e1dc61840c798dc90"
   },
   "external-secrets.io/v1/ExternalSecret/kube-system/dns-gateway-auth-key": {
     "moving": true,
@@ -230,5 +234,11 @@
   "trust.cert-manager.io/v1alpha1/Bundle//levizitting-ca-bundle": {
     "moving": false,
     "sha256": "94fd269ed825e075f124681b78a864b6eb562896c3b133a4ce03f80f753d19d1"
+  },
+  "external-secrets.io/v1/SecretStore/kube-system/bootstrap-aws-ssm": {
+    "moving": true,
+    "owner": "ingress",
+    "introduced": 2,
+    "sha256": "585c3b22e2cb8b7d2fb0718a23ac19461243d4e885f947e3f48481b39970760d"
   }
 }

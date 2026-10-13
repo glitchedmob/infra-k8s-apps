@@ -1,0 +1,20 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudflared-token
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bootstrap-aws-ssm
+    kind: SecretStore
+  target:
+    name: cloudflared-token
+    creationPolicy: Owner
+  data:
+    - secretKey: token
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/cloudflare-tunnel-token
