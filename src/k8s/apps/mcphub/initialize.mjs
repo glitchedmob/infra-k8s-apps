@@ -29,7 +29,7 @@ try {
     throw new Error('Database initialization failed; refusing to start MCPHub');
   }
   const { getSystemConfigDao } = await import('/app/dist/dao/DaoFactory.js');
-  // v1.0.44's file migration omits activityLog. The seed alone is NOT enough.
+  // Upstream's file migration still omits activityLog. The seed alone is NOT enough.
   // Reapply only systemConfig on every startup, not users/servers/bindings.
   const updated = await getSystemConfigDao().update(seed.systemConfig);
   if (updated.activityLog?.storeToolPayload !== false) {
