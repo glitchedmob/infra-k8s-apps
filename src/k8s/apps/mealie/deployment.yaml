@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mealie
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mealie
+  template:
+    metadata:
+      annotations:
+        secret.reloader.stakater.com/reload: mealie-runtime,mealie-db-app
+      labels:
+        app.kubernetes.io/name: mealie
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        # The official image's abc user and group are both 911.
+        runAsNonRoot: true
+        runAsUser: 911
+        runAsGroup: 911
+        fsGroup: 911
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mealie
+          image: ghcr.io/mealie-recipes/mealie:v3.28.0
+          imagePullPolicy: IfNotPresent
+          # The image wrapper overwrites HOST_IP with its gateway, so start Python directly.
+          command: ["/opt/mealie/bin/python", "-m", "mealie.main"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-runtime
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-runtime
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_CONFIGURATION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-runtime
+                  key: OIDC_CONFIGURATION_URL
+            - name: BASE_URL
+              value: https://mealie.levizitting.com
+            - name: API_PORT
+              value: "9000"
+            # main.py passes HOST_IP to Uvicorn's forwarded_allow_ips.
+            # Ingress is restricted to Traefik by networkpolicy.yaml.
+            - name: HOST_IP
+              value: "*"
+            - name: DB_ENGINE
+              value: postgres
+            - name: POSTGRES_SERVER
+              value: mealie-db-rw
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-db-app
+                  key: dbname
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-db-app
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-db-app
+                  key: password
+            - name: PGSSLMODE
+              value: require
+            - name: UVICORN_WORKERS
+              value: "1"
+            - name: WORKER_PER_CORE
+              value: "1"
+            - name: ALLOW_SIGNUP
+              value: "false"
+            - name: ALLOW_PASSWORD_LOGIN
+              value: "false"
+            - name: OIDC_AUTH_ENABLED
+              value: "true"
+            - name: OIDC_SIGNUP_ENABLED
+              value: "true"
+            - name: OIDC_REQUIRES_EMAIL_VERIFICATION
+              value: "true"
+            # ZITADEL emits the current application project's roles as keys in the claim.
+            - name: OIDC_GROUPS_CLAIM
+              value: urn:zitadel:iam:org:project:roles
+            - name: OIDC_USER_GROUP
+              value: access
+            - name: OIDC_ADMIN_GROUP
+              value: admin
+            - name: OIDC_PROVIDER_NAME
+              value: ZITADEL
+            - name: OIDC_AUTO_REDIRECT
+              value: "true"
+            - name: OIDC_SCOPES_OVERRIDE
+              value: openid profile email
+            - name: TZ
+              value: America/Chicago
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            # v3.28.0 loads this file into SESSION_SECRET ahead of environment settings.
+            # The separate JWT SECRET is generated as /app/data/.secret and backed up with the PVC.
+            - name: session-secret
+              mountPath: /app/data/.session_secret
+              subPath: .session_secret
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          startupProbe:
+            httpGet:
+              path: /api/app/about
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/app/about
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/app/about
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mealie-data
+        - name: session-secret
+          secret:
+            secretName: mealie-runtime
+            defaultMode: 0440
+            items:
+              - key: SESSION_SECRET
+                path: .session_secret
+        - name: tmp
+          emptyDir: {}

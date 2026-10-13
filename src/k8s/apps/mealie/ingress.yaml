@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mealie
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: mealie-mealie-https-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - mealie.levizitting.com
+      secretName: mealie-levizitting-com-tls
+  rules:
+    - host: mealie.levizitting.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mealie
+                port:
+                  name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mealie-disable-password-login
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: mealie-mealie-https-redirect@kubernetescrd,mealie-mealie-disable-password-login@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - mealie.levizitting.com
+      secretName: mealie-levizitting-com-tls
+  rules:
+    - host: mealie.levizitting.com
+      http:
+        paths:
+          # Match the decoded path, rather than relying on a URL regex to block encoded paths.
+          - path: /api/auth/token
+            pathType: Prefix
+            backend:
+              service:
+                name: mealie
+                port:
+                  name: http
