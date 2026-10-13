@@ -97,6 +97,8 @@ spec:
               value: /app/data/mcp_settings.json
             - name: BETTER_AUTH_ENABLED
               value: "true"
+            - name: BETTER_AUTH_DISABLE_PASSWORD_LOGIN
+              value: "true"
             - name: BETTER_AUTH_OIDC_ENABLED
               value: "true"
             - name: BETTER_AUTH_OIDC_PROVIDER_ID
