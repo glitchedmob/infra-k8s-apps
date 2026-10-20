@@ -66,7 +66,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
         - name: tailscale
-          image: tailscale/tailscale:v1.88.4
+          image: tailscale/tailscale:v1.104.1
           env:
             - name: TS_AUTHKEY
               valueFrom:
