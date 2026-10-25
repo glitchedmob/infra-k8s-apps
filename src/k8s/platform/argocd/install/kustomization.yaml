@@ -6,6 +6,10 @@ resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.5/manifests/ha/install.yaml
   - dex-argocd-client-secret.yaml
 
+images:
+  - name: ghcr.io/dexidp/dex
+    newTag: v2.46.1
+
 patches:
   - path: patches/argocd-cm.yaml
   - path: patches/argocd-cmd-params-cm.yaml
