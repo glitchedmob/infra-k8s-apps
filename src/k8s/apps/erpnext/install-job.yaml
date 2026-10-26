@@ -79,7 +79,6 @@ spec:
               bench --site "$SITE_NAME" install-app erpnext >/dev/null 2>&1
               bench --site "$SITE_NAME" migrate >/dev/null 2>&1
               bench --site "$SITE_NAME" enable-scheduler >/dev/null 2>&1
-              bash /bootstrap/configure.sh
           envFrom:
             - configMapRef:
                 name: erpnext-config
@@ -105,9 +104,6 @@ spec:
               mountPath: /home/frappe/frappe-bench/sites
             - name: logs
               mountPath: /home/frappe/frappe-bench/logs
-            - name: bootstrap
-              mountPath: /bootstrap
-              readOnly: true
             - name: settings
               mountPath: /settings
               readOnly: true
@@ -117,9 +113,6 @@ spec:
             claimName: erpnext-sites
         - name: logs
           emptyDir: {}
-        - name: bootstrap
-          configMap:
-            name: erpnext-bootstrap
         - name: settings
           secret:
             secretName: erpnext-settings
