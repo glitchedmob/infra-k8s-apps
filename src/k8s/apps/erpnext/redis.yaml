@@ -1,7 +1,7 @@
 apiVersion: parameters.kubeblocks.io/v1alpha1
 kind: Parameter
 metadata:
-  name: erpnext-redis
+  name: erpnext
   labels:
     app.kubernetes.io/instance: erpnext
     config.kubeblocks.io/init-parameters: "true"
