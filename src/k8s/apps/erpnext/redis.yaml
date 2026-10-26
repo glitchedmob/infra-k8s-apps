@@ -28,6 +28,17 @@ spec:
   clusterDef: redis
   topology: replication
   terminationPolicy: DoNotTerminate
+  services:
+    - name: redis
+      serviceName: erpnext-redis
+      componentSelector: redis
+      roleSelector: primary
+      spec:
+        type: ClusterIP
+        ports:
+          - name: redis
+            port: 6379
+            targetPort: redis
   componentSpecs:
     - name: redis
       componentDef: redis-8-1.0.2
