@@ -23,7 +23,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/instance: erpnext-redis
+              app.kubernetes.io/instance: erpnext
       ports:
         - protocol: TCP
           port: 6379
@@ -82,7 +82,7 @@ spec:
         operator: In
         values:
           - erpnext-db
-          - erpnext-redis
+          - erpnext
   policyTypes:
     - Ingress
   ingress:

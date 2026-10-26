@@ -3,12 +3,12 @@ kind: Parameter
 metadata:
   name: erpnext-redis
   labels:
-    app.kubernetes.io/instance: erpnext-redis
+    app.kubernetes.io/instance: erpnext
     config.kubeblocks.io/init-parameters: "true"
   annotations:
     argocd.argoproj.io/sync-wave: "-3"
 spec:
-  clusterName: erpnext-redis
+  clusterName: erpnext
   componentParameters:
     - componentName: redis
       userConfigTemplates:
@@ -20,7 +20,7 @@ spec:
 apiVersion: apps.kubeblocks.io/v1
 kind: Cluster
 metadata:
-  name: erpnext-redis
+  name: erpnext
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
@@ -29,8 +29,8 @@ spec:
   topology: replication
   terminationPolicy: DoNotTerminate
   services:
-    - name: redis
-      serviceName: erpnext-redis
+    - name: primary
+      serviceName: redis
       componentSelector: redis
       roleSelector: primary
       spec:
@@ -57,7 +57,7 @@ spec:
             requiredDuringSchedulingIgnoredDuringExecution:
               - labelSelector:
                   matchLabels:
-                    app.kubernetes.io/instance: erpnext-redis
+                    app.kubernetes.io/instance: erpnext
                     apps.kubeblocks.io/component-name: redis
                 topologyKey: kubernetes.io/hostname
       resources:
@@ -93,7 +93,7 @@ spec:
             requiredDuringSchedulingIgnoredDuringExecution:
               - labelSelector:
                   matchLabels:
-                    app.kubernetes.io/instance: erpnext-redis
+                    app.kubernetes.io/instance: erpnext
                     apps.kubeblocks.io/component-name: redis-sentinel
                 topologyKey: kubernetes.io/hostname
       resources:
