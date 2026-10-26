@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erpnext-worker
+  annotations:
+    secret.reloader.stakater.com/reload: erpnext-settings
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: erpnext
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: erpnext
+        app.kubernetes.io/component: worker
+      annotations:
+        k8up.io/backup: "false"
+    spec:
+      serviceAccountName: erpnext
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: configure
+          image: frappe/erpnext
+          args: [bash, -ec, "exec ./env/bin/python /bootstrap/configure.py"]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+            - name: bootstrap
+              mountPath: /bootstrap
+              readOnly: true
+            - name: settings
+              mountPath: /settings
+              readOnly: true
+      containers:
+        - name: short-default
+          image: frappe/erpnext
+          args: [bench, worker, --queue, "short,default"]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          readinessProbe:
+            exec:
+              command: [bash, -ec, "wait-for-it $DB_HOST:$DB_PORT -t 1 && wait-for-it erpnext-queue:6379 -t 1"]
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+        - name: long
+          image: frappe/erpnext
+          args: [bench, worker, --queue, "long"]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          readinessProbe:
+            exec:
+              command: [bash, -ec, "wait-for-it $DB_HOST:$DB_PORT -t 1 && wait-for-it erpnext-queue:6379 -t 1"]
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: erpnext-sites
+        - name: logs
+          emptyDir: {}
+        - name: bootstrap
+          configMap:
+            name: erpnext-bootstrap
+        - name: settings
+          secret:
+            secretName: erpnext-settings

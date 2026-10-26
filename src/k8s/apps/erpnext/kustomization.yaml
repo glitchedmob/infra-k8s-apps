@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: erpnext
+configurations:
+  - name-references.yaml
+resources:
+  - ../../platform/services/backup-base
+  - namespace.yaml
+  - secretstore.yaml
+  - externalsecret.yaml
+  - storage.yaml
+  - database.yaml
+  - cache.yaml
+  - queue.yaml
+  - site-job.yaml
+  - web-deployment.yaml
+  - worker-deployment.yaml
+  - scheduler-deployment.yaml
+  - service.yaml
+  - middleware-https-redirect.yaml
+  - ingress.yaml
+  - networkpolicy.yaml
+  - backup-serviceaccount.yaml
+  - externalsecret-backup-credentials.yaml
+configMapGenerator:
+  - name: erpnext-config
+    envs:
+      - config.env
+  - name: erpnext-bootstrap
+    files:
+      - site.py
+      - configure.py
+      - backup.py
+generatorOptions:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+images:
+  - name: frappe/erpnext
+    newTag: v16.52.1
+  - name: mariadb
+    newTag: 11.8.6
+  - name: valkey/valkey
+    newTag: 8.1.6
+patches:
+  - path: backup-patch.yaml
+    target:
+      group: k8up.io
+      version: v1
+      kind: PreBackupPod
+      name: app-backup
+  - path: schedule-patch.yaml
+    target:
+      group: k8up.io
+      version: v1
+      kind: Schedule
+      name: app-backup

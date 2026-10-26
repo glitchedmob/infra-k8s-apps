@@ -1,0 +1,207 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erpnext-web
+  annotations:
+    secret.reloader.stakater.com/reload: erpnext-settings
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: erpnext
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: erpnext
+        app.kubernetes.io/component: web
+      annotations:
+        k8up.io/backup: "false"
+    spec:
+      serviceAccountName: erpnext
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: configure
+          image: frappe/erpnext
+          args: [bash, -ec, "exec ./env/bin/python /bootstrap/configure.py"]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+            - name: bootstrap
+              mountPath: /bootstrap
+              readOnly: true
+            - name: settings
+              mountPath: /settings
+              readOnly: true
+      containers:
+        - name: gunicorn
+          image: frappe/erpnext
+          args:
+            - gunicorn
+            - --chdir=/home/frappe/frappe-bench/sites
+            - --bind=0.0.0.0:8000
+            - --threads=4
+            - --workers=2
+            - --worker-class=gthread
+            - --worker-tmp-dir=/dev/shm
+            - --timeout=120
+            - --preload
+            - frappe.app:application
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          ports:
+            - name: backend
+              containerPort: 8000
+          startupProbe:
+            tcpSocket:
+              port: backend
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/method/ping
+              port: backend
+              httpHeaders:
+                - name: Host
+                  value: finances.levizitting.com
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: backend
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 250m
+              memory: 768Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+        - name: nginx
+          image: frappe/erpnext
+          args: [nginx-entrypoint.sh]
+          env:
+            - name: BACKEND
+              value: 127.0.0.1:8000
+            - name: SOCKETIO
+              value: 127.0.0.1:9000
+            - name: FRAPPE_SITE_NAME_HEADER
+              value: finances.levizitting.com
+            - name: UPSTREAM_REAL_IP_ADDRESS
+              value: 10.54.0.0/16
+            - name: UPSTREAM_REAL_IP_RECURSIVE
+              value: "on"
+            - name: UPSTREAM_REAL_IP_HEADER
+              value: X-Forwarded-For
+            - name: PROXY_READ_TIMEOUT
+              value: "120"
+            - name: CLIENT_MAX_BODY_SIZE
+              value: 50m
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/method/ping
+              port: http
+              httpHeaders:
+                - name: Host
+                  value: finances.levizitting.com
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+        - name: socketio
+          image: frappe/erpnext
+          args: [node, /home/frappe/frappe-bench/apps/frappe/socketio.js]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          ports:
+            - name: socketio
+              containerPort: 9000
+          readinessProbe:
+            tcpSocket:
+              port: socketio
+          livenessProbe:
+            tcpSocket:
+              port: socketio
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: erpnext-sites
+        - name: logs
+          emptyDir: {}
+        - name: bootstrap
+          configMap:
+            name: erpnext-bootstrap
+        - name: settings
+          secret:
+            secretName: erpnext-settings

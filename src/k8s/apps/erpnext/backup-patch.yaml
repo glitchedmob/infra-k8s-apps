@@ -1,0 +1,69 @@
+- op: replace
+  path: /metadata/name
+  value: erpnext-backup
+- op: replace
+  path: /metadata/labels/backup.k8up.io~1app
+  value: erpnext
+- op: replace
+  path: /spec/fileExtension
+  value: .tar.gz
+- op: replace
+  path: /spec/backupCommand
+  value: sh -ec 'exec ./env/bin/python /bootstrap/backup.py'
+- op: add
+  path: /spec/pod/metadata
+  value:
+    labels:
+      app.kubernetes.io/name: erpnext
+      app.kubernetes.io/component: backup
+- op: replace
+  path: /spec/pod/spec
+  value:
+    serviceAccountName: erpnext-backup
+    automountServiceAccountToken: false
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: backup
+        image: frappe/erpnext
+        command: [sh, -c, sleep 3600]
+        envFrom:
+          - configMapRef:
+              name: erpnext-config
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        volumeMounts:
+          - name: sites
+            mountPath: /home/frappe/frappe-bench/sites
+          - name: logs
+            mountPath: /home/frappe/frappe-bench/logs
+          - name: bootstrap
+            mountPath: /bootstrap
+            readOnly: true
+          - name: tmp
+            mountPath: /tmp
+    volumes:
+      - name: sites
+        persistentVolumeClaim:
+          claimName: erpnext-sites
+      - name: logs
+        emptyDir: {}
+      - name: bootstrap
+        configMap:
+          name: erpnext-bootstrap
+      - name: tmp
+        emptyDir: {}
