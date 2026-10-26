@@ -12,7 +12,7 @@ resources:
   - database.yaml
   - cache.yaml
   - queue.yaml
-  - site-job.yaml
+  - install-job.yaml
   - web-deployment.yaml
   - worker-deployment.yaml
   - scheduler-deployment.yaml
@@ -28,9 +28,8 @@ configMapGenerator:
       - config.env
   - name: erpnext-bootstrap
     files:
-      - site.py
-      - configure.py
-      - backup.py
+      - configure.sh
+      - settings.sql
 generatorOptions:
   annotations:
     argocd.argoproj.io/sync-wave: "-3"

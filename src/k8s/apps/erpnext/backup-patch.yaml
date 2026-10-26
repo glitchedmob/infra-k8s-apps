@@ -9,7 +9,23 @@
   value: .tar.gz
 - op: replace
   path: /spec/backupCommand
-  value: sh -ec 'exec ./env/bin/python /bootstrap/backup.py'
+  value: |
+    bash -ec '
+      set -euo pipefail
+      umask 077
+      cd /home/frappe/frappe-bench
+      temporary=$(mktemp -d /tmp/erpnext-backup.XXXXXX)
+      trap '\''rm -rf "$temporary"'\'' EXIT
+      mkdir "$temporary/native"
+      if ! bench --site "$SITE_NAME" backup --with-files --ignore-backup-conf \
+        --backup-path "$temporary/native" >/dev/null 2>&1; then
+        echo "ERPNext backup failed." >&2
+        exit 1
+      fi
+      tar -czf "$temporary/erpnext.tar.gz" -C "$temporary/native" .
+      cat "$temporary/erpnext.tar.gz"
+    '
+
 - op: add
   path: /spec/pod/metadata
   value:
@@ -51,9 +67,6 @@
             mountPath: /home/frappe/frappe-bench/sites
           - name: logs
             mountPath: /home/frappe/frappe-bench/logs
-          - name: bootstrap
-            mountPath: /bootstrap
-            readOnly: true
           - name: tmp
             mountPath: /tmp
     volumes:
@@ -62,8 +75,5 @@
           claimName: erpnext-sites
       - name: logs
         emptyDir: {}
-      - name: bootstrap
-        configMap:
-          name: erpnext-bootstrap
       - name: tmp
         emptyDir: {}

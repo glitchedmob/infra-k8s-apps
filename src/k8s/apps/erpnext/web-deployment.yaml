@@ -32,7 +32,7 @@ spec:
       initContainers:
         - name: configure
           image: frappe/erpnext
-          args: [bash, -ec, "exec ./env/bin/python /bootstrap/configure.py"]
+          args: [bash, /bootstrap/configure.sh]
           envFrom:
             - configMapRef:
                 name: erpnext-config
