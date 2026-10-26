@@ -1,7 +1,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: erpnext-queue-redis
+  name: erpnext-redis
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
@@ -9,13 +9,13 @@ spec:
   unhealthyPodEvictionPolicy: AlwaysAllow
   selector:
     matchLabels:
-      app.kubernetes.io/instance: erpnext-queue
+      app.kubernetes.io/instance: erpnext-redis
       apps.kubeblocks.io/component-name: redis
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: erpnext-queue-redis-sentinel
+  name: erpnext-redis-sentinel
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
@@ -23,5 +23,5 @@ spec:
   unhealthyPodEvictionPolicy: AlwaysAllow
   selector:
     matchLabels:
-      app.kubernetes.io/instance: erpnext-queue
+      app.kubernetes.io/instance: erpnext-redis
       apps.kubeblocks.io/component-name: redis-sentinel
