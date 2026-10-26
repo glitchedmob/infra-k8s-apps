@@ -62,7 +62,7 @@ spec:
         - name: gunicorn
           image: frappe/erpnext
           args:
-            - gunicorn
+            - /home/frappe/frappe-bench/env/bin/gunicorn
             - --chdir=/home/frappe/frappe-bench/sites
             - --bind=0.0.0.0:8000
             - --threads=4
@@ -133,6 +133,7 @@ spec:
             - name: CLIENT_MAX_BODY_SIZE
               value: 50m
           securityContext:
+            runAsGroup: 0
             allowPrivilegeEscalation: false
             capabilities:
               drop: [ALL]
