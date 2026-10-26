@@ -28,10 +28,7 @@
 
 - op: add
   path: /spec/pod/metadata
-  value:
-    labels:
-      app.kubernetes.io/name: erpnext
-      app.kubernetes.io/component: backup
+  value: {}
 - op: replace
   path: /spec/pod/spec
   value:
