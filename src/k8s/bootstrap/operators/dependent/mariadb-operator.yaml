@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mariadb-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: platform
+  source:
+    chart: mariadb-operator
+    repoURL: https://mariadb-operator.github.io/mariadb-operator
+    targetRevision: 26.10.2
+    helm:
+      valuesObject:
+        crds:
+          enabled: false
+        ha:
+          enabled: true
+          replicas: 3
+        strategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxSurge: 0
+            maxUnavailable: 1
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: mariadb-operator
+                    app.kubernetes.io/instance: mariadb-operator
+                topologyKey: kubernetes.io/hostname
+        pdb:
+          enabled: true
+          maxUnavailable: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        metrics:
+          enabled: true
+          serviceMonitor:
+            additionalLabels:
+              release: kube-prometheus-stack
+        webhook:
+          ha:
+            enabled: true
+            replicas: 2
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 0
+              maxUnavailable: 1
+          cert:
+            certManager:
+              enabled: true
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: mariadb-operator-webhook
+                      app.kubernetes.io/instance: mariadb-operator
+                  topologyKey: kubernetes.io/hostname
+          pdb:
+            enabled: true
+            maxUnavailable: 1
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          serviceMonitor:
+            additionalLabels:
+              release: kube-prometheus-stack
+        certController:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mariadb-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
