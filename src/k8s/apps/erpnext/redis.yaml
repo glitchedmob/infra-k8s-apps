@@ -1,3 +1,34 @@
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: erpnext-redis
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  length: 32
+  digits: 8
+  symbols: 0
+  allowRepeat: true
+  noUpper: false
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: erpnext-redis
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  refreshPolicy: CreatedOnce
+  target:
+    name: erpnext-redis
+    creationPolicy: Owner
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: erpnext-redis
+---
 apiVersion: parameters.kubeblocks.io/v1alpha1
 kind: Parameter
 metadata:
@@ -46,11 +77,8 @@ spec:
       replicas: 2
       systemAccounts:
         - name: default
-          passwordConfig:
-            length: 32
-            numDigits: 8
-            numSymbols: 0
-            letterCase: MixedCases
+          secretRef:
+            name: erpnext-redis
       schedulingPolicy:
         affinity:
           podAntiAffinity:

@@ -98,7 +98,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-redis-redis-account-default
+                  name: erpnext-redis
                   key: password
           securityContext:
             allowPrivilegeEscalation: false
