@@ -39,6 +39,7 @@ spec:
               umask 077
               trap 'echo "ERPNext site setup failed." >&2' ERR
               cd /home/frappe/frappe-bench
+              [[ -f sites/common_site_config.json ]] || printf '{}\n' > sites/common_site_config.json
 
               site_config="sites/$SITE_NAME/site_config.json"
               if [[ -d "sites/$SITE_NAME" ]]; then
@@ -61,8 +62,8 @@ spec:
               ls -1 apps > sites/apps.txt
               bench set-config -g db_host "$DB_HOST"
               bench set-config -gp db_port "$DB_PORT"
-              redis_cache="redis://:$REDIS_CACHE_PASSWORD@$REDIS_CACHE_HOST:6379"
-              redis_queue="redis://:$REDIS_QUEUE_PASSWORD@$REDIS_QUEUE_HOST:6379"
+              redis_cache="redis://:$REDIS_PASSWORD@$REDIS_HOST:6379/$REDIS_CACHE_DB"
+              redis_queue="redis://:$REDIS_PASSWORD@$REDIS_HOST:6379/$REDIS_QUEUE_DB"
               bench set-config -g redis_cache "$redis_cache"
               bench set-config -g redis_queue "$redis_queue"
               bench set-config -g redis_socketio "$redis_queue"
@@ -93,12 +94,7 @@ spec:
             - configMapRef:
                 name: erpnext-config
           env:
-            - name: REDIS_CACHE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: erpnext-cache-redis-account-default
-                  key: password
-            - name: REDIS_QUEUE_PASSWORD
+            - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: erpnext-queue-redis-account-default
