@@ -10,8 +10,7 @@ resources:
   - externalsecret.yaml
   - storage.yaml
   - database.yaml
-  - cache.yaml
-  - queue.yaml
+  - redis.yaml
   - redis-pdb.yaml
   - install-job.yaml
   - web-deployment.yaml
@@ -31,6 +30,12 @@ configMapGenerator:
     files:
       - configure.sh
       - settings.sql
+  - name: erpnext-redis-overrides
+    files:
+      - redis.conf
+    options:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-4"
 generatorOptions:
   annotations:
     argocd.argoproj.io/sync-wave: "-3"

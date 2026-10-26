@@ -20,12 +20,8 @@ spec:
           port: 3306
     - to:
         - podSelector:
-            matchExpressions:
-              - key: app.kubernetes.io/instance
-                operator: In
-                values:
-                  - erpnext-cache
-                  - erpnext-queue
+            matchLabels:
+              app.kubernetes.io/instance: erpnext-queue
       ports:
         - protocol: TCP
           port: 6379
@@ -84,7 +80,6 @@ spec:
         operator: In
         values:
           - erpnext-db
-          - erpnext-cache
           - erpnext-queue
   policyTypes:
     - Ingress

@@ -1,6 +1,9 @@
 nameReference:
   - kind: ConfigMap
     fieldSpecs:
+      - group: parameters.kubeblocks.io
+        kind: Parameter
+        path: spec/componentParameters/userConfigTemplates/redis-replication-config/templateRef
       - group: k8up.io
         kind: PreBackupPod
         path: spec/pod/spec/containers/envFrom/configMapRef/name
