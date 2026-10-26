@@ -1,14 +1,14 @@
 apiVersion: parameters.kubeblocks.io/v1alpha1
 kind: Parameter
 metadata:
-  name: erpnext-queue-redis
+  name: erpnext-redis
   labels:
-    app.kubernetes.io/instance: erpnext-queue
+    app.kubernetes.io/instance: erpnext-redis
     config.kubeblocks.io/init-parameters: "true"
   annotations:
     argocd.argoproj.io/sync-wave: "-3"
 spec:
-  clusterName: erpnext-queue
+  clusterName: erpnext-redis
   componentParameters:
     - componentName: redis
       userConfigTemplates:
@@ -20,7 +20,7 @@ spec:
 apiVersion: apps.kubeblocks.io/v1
 kind: Cluster
 metadata:
-  name: erpnext-queue
+  name: erpnext-redis
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
     argocd.argoproj.io/sync-options: Prune=false,Delete=false
@@ -28,6 +28,17 @@ spec:
   clusterDef: redis
   topology: replication
   terminationPolicy: DoNotTerminate
+  services:
+    - name: redis
+      serviceName: erpnext-redis
+      componentSelector: redis
+      roleSelector: primary
+      spec:
+        type: ClusterIP
+        ports:
+          - name: redis
+            port: 6379
+            targetPort: redis
   componentSpecs:
     - name: redis
       componentDef: redis-8-1.0.2
@@ -46,7 +57,7 @@ spec:
             requiredDuringSchedulingIgnoredDuringExecution:
               - labelSelector:
                   matchLabels:
-                    app.kubernetes.io/instance: erpnext-queue
+                    app.kubernetes.io/instance: erpnext-redis
                     apps.kubeblocks.io/component-name: redis
                 topologyKey: kubernetes.io/hostname
       resources:
@@ -82,7 +93,7 @@ spec:
             requiredDuringSchedulingIgnoredDuringExecution:
               - labelSelector:
                   matchLabels:
-                    app.kubernetes.io/instance: erpnext-queue
+                    app.kubernetes.io/instance: erpnext-redis
                     apps.kubeblocks.io/component-name: redis-sentinel
                 topologyKey: kubernetes.io/hostname
       resources:

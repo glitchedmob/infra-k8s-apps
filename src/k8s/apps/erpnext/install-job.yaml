@@ -58,6 +58,7 @@ spec:
                 sleep 2
               done
               unset MYSQL_PWD
+              wait-for-it "$REDIS_HOST:6379" -t 120
 
               ls -1 apps > sites/apps.txt
               bench set-config -g db_host "$DB_HOST"
@@ -97,7 +98,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-queue-redis-account-default
+                  name: erpnext-redis-redis-account-default
                   key: password
           securityContext:
             allowPrivilegeEscalation: false

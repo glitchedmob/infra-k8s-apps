@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: erpnext
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
 spec:
   podSelector:
     matchLabels:
@@ -21,7 +23,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/instance: erpnext-queue
+              app.kubernetes.io/instance: erpnext-redis
       ports:
         - protocol: TCP
           port: 6379
@@ -80,7 +82,7 @@ spec:
         operator: In
         values:
           - erpnext-db
-          - erpnext-queue
+          - erpnext-redis
   policyTypes:
     - Ingress
   ingress:
