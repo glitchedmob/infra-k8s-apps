@@ -12,6 +12,7 @@ resources:
   - database.yaml
   - cache.yaml
   - queue.yaml
+  - redis-pdb.yaml
   - install-job.yaml
   - web-deployment.yaml
   - worker-deployment.yaml
@@ -36,10 +37,6 @@ generatorOptions:
 images:
   - name: frappe/erpnext
     newTag: v16.52.1
-  - name: mariadb
-    newTag: 11.8.6
-  - name: valkey/valkey
-    newTag: 8.1.6
 patches:
   - path: backup-patch.yaml
     target:

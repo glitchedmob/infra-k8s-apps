@@ -49,12 +49,23 @@ spec:
                 ' "$site_config" >/dev/null
               fi
 
+              # The operator creates the database, user, and grants.
+              export MYSQL_PWD
+              MYSQL_PWD="$(jq -er .databasePassword /settings/settings.json)"
+              until mariadb --connect-timeout=5 --host="$DB_HOST" --port="$DB_PORT" \
+                --user="$DB_NAME" --database="$DB_NAME" -e 'SELECT 1' >/dev/null 2>&1; do
+                sleep 2
+              done
+              unset MYSQL_PWD
+
               ls -1 apps > sites/apps.txt
               bench set-config -g db_host "$DB_HOST"
               bench set-config -gp db_port "$DB_PORT"
-              bench set-config -g redis_cache "$REDIS_CACHE"
-              bench set-config -g redis_queue "$REDIS_QUEUE"
-              bench set-config -g redis_socketio "$REDIS_QUEUE"
+              redis_cache="redis://:$REDIS_CACHE_PASSWORD@$REDIS_CACHE_HOST:6379"
+              redis_queue="redis://:$REDIS_QUEUE_PASSWORD@$REDIS_QUEUE_HOST:6379"
+              bench set-config -g redis_cache "$redis_cache"
+              bench set-config -g redis_queue "$redis_queue"
+              bench set-config -g redis_socketio "$redis_queue"
               bench set-config -gp socketio_port "$SOCKETIO_PORT"
 
               if [[ ! -d "sites/$SITE_NAME" ]]; then
@@ -65,15 +76,14 @@ spec:
                   --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" \
                   --db-name "$DB_NAME" --db-user "$DB_NAME" \
                   --db-password "$(jq -er .databasePassword /settings/settings.json)" \
-                  --db-root-username root --db-root-password "$DB_ROOT_PASSWORD" \
+                  --no-setup-db \
                   --admin-password "$(jq -er .adminPassword /settings/settings.json)" \
-                  --mariadb-user-host-login-scope '%' --install-app erpnext >/dev/null 2>&1
+                  --install-app erpnext >/dev/null 2>&1
                 bench --site "$SITE_NAME" set-config encryption_key "$encryption_key"
                 temporary="$(mktemp sites/.common-config.XXXXXX)"
                 jq 'del(.encryption_key)' sites/common_site_config.json > "$temporary"
                 mv "$temporary" sites/common_site_config.json
               fi
-              unset DB_ROOT_PASSWORD
 
               bench --site "$SITE_NAME" set-config host_name "$SITE_URL"
               bench --site "$SITE_NAME" install-app erpnext >/dev/null 2>&1
@@ -83,11 +93,16 @@ spec:
             - configMapRef:
                 name: erpnext-config
           env:
-            - name: DB_ROOT_PASSWORD
+            - name: REDIS_CACHE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-database
-                  key: rootPassword
+                  name: erpnext-cache-redis-account-default
+                  key: password
+            - name: REDIS_QUEUE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: erpnext-queue-redis-account-default
+                  key: password
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

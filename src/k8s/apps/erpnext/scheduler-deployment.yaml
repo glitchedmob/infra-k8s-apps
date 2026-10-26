@@ -42,7 +42,7 @@ spec:
               drop: [ALL]
           readinessProbe:
             exec:
-              command: [bash, -ec, "wait-for-it $DB_HOST:$DB_PORT -t 1 && wait-for-it erpnext-queue:6379 -t 1"]
+              command: [bash, -ec, "wait-for-it $DB_HOST:$DB_PORT -t 1 && wait-for-it $REDIS_QUEUE_HOST:6379 -t 1"]
             periodSeconds: 15
             timeoutSeconds: 5
           resources:

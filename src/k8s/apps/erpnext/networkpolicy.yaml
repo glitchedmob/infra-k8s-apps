@@ -9,24 +9,24 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: erpnext
-      ports:
-        - protocol: TCP
-          port: 3306
-        - protocol: TCP
-          port: 6379
+  ingress: []
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/name: erpnext
+              app.kubernetes.io/instance: erpnext-db
       ports:
         - protocol: TCP
           port: 3306
+    - to:
+        - podSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                  - erpnext-cache
+                  - erpnext-queue
+      ports:
         - protocol: TCP
           port: 6379
     - to:
@@ -72,6 +72,35 @@ spec:
       ports:
         - protocol: TCP
           port: 443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: erpnext-data
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/instance
+        operator: In
+        values:
+          - erpnext-db
+          - erpnext-cache
+          - erpnext-queue
+  policyTypes:
+    - Ingress
+  ingress:
+    # Application access, replication, Sentinel, and operator-managed jobs.
+    - from:
+        - podSelector: {}
+    - from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values:
+                  - mariadb-system
+                  - kb-system
+                  - observability
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
