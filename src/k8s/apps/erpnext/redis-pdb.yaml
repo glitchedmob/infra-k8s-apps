@@ -1,0 +1,55 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: erpnext-cache-redis
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: erpnext-cache
+      apps.kubeblocks.io/component-name: redis
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: erpnext-cache-redis-sentinel
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  minAvailable: 2
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: erpnext-cache
+      apps.kubeblocks.io/component-name: redis-sentinel
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: erpnext-queue-redis
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  minAvailable: 1
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: erpnext-queue
+      apps.kubeblocks.io/component-name: redis
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: erpnext-queue-redis-sentinel
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  minAvailable: 2
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: erpnext-queue
+      apps.kubeblocks.io/component-name: redis-sentinel

@@ -1,0 +1,133 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: erpnext-site
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 1800
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: erpnext
+        app.kubernetes.io/component: install
+      annotations:
+        k8up.io/backup: "false"
+    spec:
+      restartPolicy: Never
+      serviceAccountName: erpnext
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: install
+          image: frappe/erpnext
+          args:
+            - bash
+            - -ec
+            - |
+              set -euo pipefail
+              umask 077
+              trap 'echo "ERPNext site setup failed." >&2' ERR
+              cd /home/frappe/frappe-bench
+
+              site_config="sites/$SITE_NAME/site_config.json"
+              if [[ -d "sites/$SITE_NAME" ]]; then
+                # Do not replace an existing site's credentials or encryption key.
+                jq -e --slurpfile desired /settings/settings.json '
+                  .db_password == $desired[0].databasePassword and
+                  .encryption_key == $desired[0].encryptionKey
+                ' "$site_config" >/dev/null
+              fi
+
+              # The operator creates the database, user, and grants.
+              export MYSQL_PWD
+              MYSQL_PWD="$(jq -er .databasePassword /settings/settings.json)"
+              until mariadb --connect-timeout=5 --host="$DB_HOST" --port="$DB_PORT" \
+                --user="$DB_NAME" --database="$DB_NAME" -e 'SELECT 1' >/dev/null 2>&1; do
+                sleep 2
+              done
+              unset MYSQL_PWD
+
+              ls -1 apps > sites/apps.txt
+              bench set-config -g db_host "$DB_HOST"
+              bench set-config -gp db_port "$DB_PORT"
+              redis_cache="redis://:$REDIS_CACHE_PASSWORD@$REDIS_CACHE_HOST:6379"
+              redis_queue="redis://:$REDIS_QUEUE_PASSWORD@$REDIS_QUEUE_HOST:6379"
+              bench set-config -g redis_cache "$redis_cache"
+              bench set-config -g redis_queue "$redis_queue"
+              bench set-config -g redis_socketio "$redis_queue"
+              bench set-config -gp socketio_port "$SOCKETIO_PORT"
+
+              if [[ ! -d "sites/$SITE_NAME" ]]; then
+                encryption_key="$(jq -er .encryptionKey /settings/settings.json)"
+                # Supply the managed key before the native installer saves passwords.
+                bench set-config -g encryption_key "$encryption_key"
+                bench new-site "$SITE_NAME" \
+                  --db-type mariadb --db-host "$DB_HOST" --db-port "$DB_PORT" \
+                  --db-name "$DB_NAME" --db-user "$DB_NAME" \
+                  --db-password "$(jq -er .databasePassword /settings/settings.json)" \
+                  --no-setup-db \
+                  --admin-password "$(jq -er .adminPassword /settings/settings.json)" \
+                  --install-app erpnext >/dev/null 2>&1
+                bench --site "$SITE_NAME" set-config encryption_key "$encryption_key"
+                temporary="$(mktemp sites/.common-config.XXXXXX)"
+                jq 'del(.encryption_key)' sites/common_site_config.json > "$temporary"
+                mv "$temporary" sites/common_site_config.json
+              fi
+
+              bench --site "$SITE_NAME" set-config host_name "$SITE_URL"
+              bench --site "$SITE_NAME" install-app erpnext >/dev/null 2>&1
+              bench --site "$SITE_NAME" migrate >/dev/null 2>&1
+              bench --site "$SITE_NAME" enable-scheduler >/dev/null 2>&1
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          env:
+            - name: REDIS_CACHE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: erpnext-cache-redis-account-default
+                  key: password
+            - name: REDIS_QUEUE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: erpnext-queue-redis-account-default
+                  key: password
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+            - name: settings
+              mountPath: /settings
+              readOnly: true
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: erpnext-sites
+        - name: logs
+          emptyDir: {}
+        - name: settings
+          secret:
+            secretName: erpnext-settings

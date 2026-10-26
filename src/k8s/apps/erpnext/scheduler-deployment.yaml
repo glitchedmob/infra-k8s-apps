@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erpnext-scheduler
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: erpnext
+      app.kubernetes.io/component: scheduler
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: erpnext
+        app.kubernetes.io/component: scheduler
+      annotations:
+        k8up.io/backup: "false"
+    spec:
+      serviceAccountName: erpnext
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 120
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: scheduler
+          image: frappe/erpnext
+          args: [bench, schedule]
+          envFrom:
+            - configMapRef:
+                name: erpnext-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          readinessProbe:
+            exec:
+              command: [bash, -ec, "wait-for-it $DB_HOST:$DB_PORT -t 1 && wait-for-it $REDIS_QUEUE_HOST:6379 -t 1"]
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: erpnext-sites
+        - name: logs
+          emptyDir: {}

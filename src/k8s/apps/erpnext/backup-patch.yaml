@@ -1,0 +1,79 @@
+- op: replace
+  path: /metadata/name
+  value: erpnext-backup
+- op: replace
+  path: /metadata/labels/backup.k8up.io~1app
+  value: erpnext
+- op: replace
+  path: /spec/fileExtension
+  value: .tar.gz
+- op: replace
+  path: /spec/backupCommand
+  value: |
+    bash -ec '
+      set -euo pipefail
+      umask 077
+      cd /home/frappe/frappe-bench
+      temporary=$(mktemp -d /tmp/erpnext-backup.XXXXXX)
+      trap '\''rm -rf "$temporary"'\'' EXIT
+      mkdir "$temporary/native"
+      if ! bench --site "$SITE_NAME" backup --with-files --ignore-backup-conf \
+        --backup-path "$temporary/native" >/dev/null 2>&1; then
+        echo "ERPNext backup failed." >&2
+        exit 1
+      fi
+      tar -czf "$temporary/erpnext.tar.gz" -C "$temporary/native" .
+      cat "$temporary/erpnext.tar.gz"
+    '
+
+- op: add
+  path: /spec/pod/metadata
+  value:
+    labels:
+      app.kubernetes.io/name: erpnext
+      app.kubernetes.io/component: backup
+- op: replace
+  path: /spec/pod/spec
+  value:
+    serviceAccountName: erpnext-backup
+    automountServiceAccountToken: false
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: backup
+        image: frappe/erpnext
+        command: [sh, -c, sleep 3600]
+        envFrom:
+          - configMapRef:
+              name: erpnext-config
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [ALL]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        volumeMounts:
+          - name: sites
+            mountPath: /home/frappe/frappe-bench/sites
+          - name: logs
+            mountPath: /home/frappe/frappe-bench/logs
+          - name: tmp
+            mountPath: /tmp
+    volumes:
+      - name: sites
+        persistentVolumeClaim:
+          claimName: erpnext-sites
+      - name: logs
+        emptyDir: {}
+      - name: tmp
+        emptyDir: {}

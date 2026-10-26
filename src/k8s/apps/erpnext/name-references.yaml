@@ -1,0 +1,10 @@
+nameReference:
+  - kind: ConfigMap
+    fieldSpecs:
+      - group: k8up.io
+        kind: PreBackupPod
+        path: spec/pod/spec/containers/envFrom/configMapRef/name
+images:
+  - group: k8up.io
+    kind: PreBackupPod
+    path: spec/pod/spec/containers/image
