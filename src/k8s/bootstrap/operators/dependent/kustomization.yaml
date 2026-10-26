@@ -4,6 +4,7 @@ resources:
   - db-operator.yaml
   - kubeblocks.yaml
   - kubeblocks-cpu-request.yaml
+  - mariadb-operator.yaml
   - otel-operator.yaml
   - percona-mongodb.yaml
   - reloader.yaml

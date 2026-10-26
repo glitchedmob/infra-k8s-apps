@@ -44,6 +44,7 @@ spec:
     - https://grafana.github.io/helm-charts
     - https://kubernetes-sigs.github.io/headlamp/
     - https://k8up-io.github.io/k8up
+    - https://mariadb-operator.github.io/mariadb-operator
     - https://oauth2-proxy.github.io/manifests
     - https://open-telemetry.github.io/opentelemetry-helm-charts
     - https://openbao.github.io/openbao-helm
