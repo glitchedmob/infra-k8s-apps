@@ -8,8 +8,8 @@ metadata:
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: bootstrap-cache-k8s
-    kind: SecretStore
+    name: bootstrap-k8s
+    kind: ClusterSecretStore
   target:
     name: cloudflared-token
     creationPolicy: Owner

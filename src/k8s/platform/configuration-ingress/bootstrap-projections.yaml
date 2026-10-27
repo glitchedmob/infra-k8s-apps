@@ -1,0 +1,19 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: crowdsec-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: bootstrap-cache-k8s
+  target:
+    name: crowdsec-secrets
+  data:
+    - secretKey: crowdsecBouncerKey
+      remoteRef:
+        key: bootstrap-ssm-cache
+        property: crowdsecBouncerKey

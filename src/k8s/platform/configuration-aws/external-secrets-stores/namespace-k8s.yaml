@@ -169,30 +169,6 @@ spec:
 apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
-  name: crowdsec-k8s
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-spec:
-  conditions:
-    - namespaces:
-        - crowdsec
-  provider:
-    kubernetes:
-      remoteNamespace: external-secrets
-      server:
-        caProvider:
-          type: ConfigMap
-          name: kube-root-ca.crt
-          key: ca.crt
-          namespace: external-secrets
-      auth:
-        serviceAccount:
-          name: eso-crowdsec-reader
-          namespace: external-secrets
----
-apiVersion: external-secrets.io/v1
-kind: ClusterSecretStore
-metadata:
   name: kube-system-k8s
   annotations:
     argocd.argoproj.io/sync-wave: "0"

@@ -2,13 +2,13 @@ apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: bootstrap-cache-k8s
-  namespace: kube-system
+  namespace: external-secrets
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   provider:
     kubernetes:
-      remoteNamespace: kube-system
+      remoteNamespace: external-secrets
       server:
         caProvider:
           type: ConfigMap

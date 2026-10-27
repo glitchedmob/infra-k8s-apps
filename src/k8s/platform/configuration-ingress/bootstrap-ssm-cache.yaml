@@ -2,7 +2,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: bootstrap-ssm-cache
-  namespace: kube-system
+  namespace: external-secrets
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

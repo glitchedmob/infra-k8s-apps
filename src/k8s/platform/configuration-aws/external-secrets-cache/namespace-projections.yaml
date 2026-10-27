@@ -185,26 +185,6 @@ spec:
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: crowdsec-secrets
-  namespace: external-secrets
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    kind: SecretStore
-    name: cache-k8s
-  target:
-    name: crowdsec-secrets
-  data:
-    - secretKey: crowdsecBouncerKey
-      remoteRef:
-        key: ssm-cache
-        property: crowdsecBouncerKey
----
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
   name: kube-system-secrets
   namespace: external-secrets
   annotations:

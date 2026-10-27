@@ -41,9 +41,6 @@ spec:
     - secretKey: b2AccountKey
       remoteRef:
         key: /vm-workloads/lz/infra-vm-workloads/backups/b2-account-key
-    - secretKey: crowdsecBouncerKey
-      remoteRef:
-        key: /vm-workloads/lz/infra-vm-workloads/crowdsec-traefik-bouncer-key
     - secretKey: dnsGatewayAuthKey
       remoteRef:
         key: /homelab/headscale/pods/lz/dns-gateway-auth-key
