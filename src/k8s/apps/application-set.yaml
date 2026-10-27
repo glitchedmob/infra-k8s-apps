@@ -4,6 +4,9 @@ metadata:
   name: apps
   namespace: argocd
 spec:
+  preservedFields:
+    annotations:
+      - argocd.argoproj.io/skip-reconcile
   generators:
     - git:
         repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
