@@ -1,0 +1,111 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: backup-ssm-cache
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-ssm
+  target:
+    name: backup-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: account-id
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/b2-account-id
+    - secretKey: account-key
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/b2-account-key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: crowdsec-ssm-cache
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-ssm
+  target:
+    name: crowdsec-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: BOUNCER_KEY_traefik
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/crowdsec-traefik-bouncer-key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: tailnet-ssm-cache
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-ssm
+  target:
+    name: tailnet-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: dnsGatewayAuthKey
+      remoteRef:
+        key: /homelab/headscale/pods/lz/dns-gateway-auth-key
+    - secretKey: ingressGatewayAuthKey
+      remoteRef:
+        key: /homelab/headscale/pods/lz/ingress-gateway-auth-key
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: openbao-ssm-cache
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-ssm
+  target:
+    name: openbao-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: resticPassword
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/openbao/restic-password
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: zitadel-ssm-cache
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-ssm
+  target:
+    name: zitadel-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: masterkey
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/zitadel/master-key
+    - secretKey: initialAdminPassword
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/zitadel/initial-admin-password
+    - secretKey: resticPassword
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/backups/zitadel/restic-password

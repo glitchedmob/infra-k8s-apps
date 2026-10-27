@@ -4,11 +4,11 @@ metadata:
   name: cloudflared-token
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: bootstrap-aws-ssm
+    name: bootstrap-cache-k8s
     kind: SecretStore
   target:
     name: cloudflared-token
@@ -16,4 +16,5 @@ spec:
   data:
     - secretKey: token
       remoteRef:
-        key: /vm-workloads/lz/infra-vm-workloads/cloudflare-tunnel-token
+        key: bootstrap-ssm-cache
+        property: cloudflaredToken

@@ -1,0 +1,22 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: bootstrap-ssm-cache
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 24h
+  secretStoreRef:
+    kind: SecretStore
+    name: bootstrap-aws-ssm
+  target:
+    name: bootstrap-ssm-cache
+    creationPolicy: Owner
+  data:
+    - secretKey: cloudflaredToken
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/cloudflare-tunnel-token
+    - secretKey: crowdsecBouncerKey
+      remoteRef:
+        key: /vm-workloads/lz/infra-vm-workloads/crowdsec-traefik-bouncer-key

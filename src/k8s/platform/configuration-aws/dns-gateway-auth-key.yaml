@@ -4,11 +4,11 @@ metadata:
   name: dns-gateway-auth-key
   namespace: kube-system
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: aws-ssm
+    name: tailnet-cache-k8s
     kind: ClusterSecretStore
   target:
     name: dns-gateway-auth-key
@@ -16,4 +16,5 @@ spec:
   data:
     - secretKey: authkey
       remoteRef:
-        key: /homelab/headscale/pods/lz/dns-gateway-auth-key
+        key: tailnet-ssm-cache
+        property: dnsGatewayAuthKey
