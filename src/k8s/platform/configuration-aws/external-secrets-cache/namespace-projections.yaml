@@ -1,0 +1,207 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: erpnext-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: erpnext-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: isp-monitoring-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: isp-monitoring-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mcphub-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: mcphub-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mealie-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: mealie-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: openbao-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: openbao-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+    - secretKey: openbaoResticPassword
+      remoteRef:
+        key: ssm-cache
+        property: openbaoResticPassword
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: sparky-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: sparky-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: zitadel-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: zitadel-secrets
+  data:
+    - secretKey: b2AccountId
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountId
+    - secretKey: b2AccountKey
+      remoteRef:
+        key: ssm-cache
+        property: b2AccountKey
+    - secretKey: zitadelMasterKey
+      remoteRef:
+        key: ssm-cache
+        property: zitadelMasterKey
+    - secretKey: zitadelInitialAdminPassword
+      remoteRef:
+        key: ssm-cache
+        property: zitadelInitialAdminPassword
+    - secretKey: zitadelResticPassword
+      remoteRef:
+        key: ssm-cache
+        property: zitadelResticPassword
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: kube-system-secrets
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: cache-k8s
+  target:
+    name: kube-system-secrets
+  data:
+    - secretKey: dnsGatewayAuthKey
+      remoteRef:
+        key: ssm-cache
+        property: dnsGatewayAuthKey
+    - secretKey: ingressGatewayAuthKey
+      remoteRef:
+        key: ssm-cache
+        property: ingressGatewayAuthKey

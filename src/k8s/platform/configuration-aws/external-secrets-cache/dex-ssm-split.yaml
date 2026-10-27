@@ -96,6 +96,32 @@ spec:
     name: cache-k8s
   target:
     name: dex-secrets
-  dataFrom:
-    - extract:
+  data:
+    - secretKey: argoWorkflowsClientSecret
+      remoteRef:
         key: ssm-cache
+        property: argoWorkflowsClientSecret
+    - secretKey: argocdClientSecret
+      remoteRef:
+        key: ssm-cache
+        property: argocdClientSecret
+    - secretKey: githubClientSecret
+      remoteRef:
+        key: ssm-cache
+        property: githubClientSecret
+    - secretKey: grafanaClientSecret
+      remoteRef:
+        key: ssm-cache
+        property: grafanaClientSecret
+    - secretKey: oauth2ProxyClientSecret
+      remoteRef:
+        key: ssm-cache
+        property: oauth2ProxyClientSecret
+    - secretKey: openbaoClientSecret
+      remoteRef:
+        key: ssm-cache
+        property: openbaoClientSecret
+    - secretKey: cookieSecret
+      remoteRef:
+        key: ssm-cache
+        property: cookieSecret

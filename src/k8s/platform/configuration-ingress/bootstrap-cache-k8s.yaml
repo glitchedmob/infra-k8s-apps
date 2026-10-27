@@ -1,0 +1,19 @@
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: bootstrap-cache-k8s
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: external-secrets
+      server:
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+      auth:
+        serviceAccount:
+          name: eso-bootstrap-cache-reader

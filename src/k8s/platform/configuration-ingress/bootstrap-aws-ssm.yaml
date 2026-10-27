@@ -2,7 +2,7 @@ apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: bootstrap-aws-ssm
-  namespace: kube-system
+  namespace: external-secrets
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:

@@ -2,5 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - bootstrap-aws-ssm.yaml
+  - bootstrap-cache-reader.yaml
+  - bootstrap-cache-k8s.yaml
+  - bootstrap-ssm-cache.yaml
+  - bootstrap-projections.yaml
+  - bootstrap-consumer-k8s.yaml
+  - crowdsec-reader.yaml
   - cloudflared-token.yaml
   - externalsecret-crowdsec.yaml

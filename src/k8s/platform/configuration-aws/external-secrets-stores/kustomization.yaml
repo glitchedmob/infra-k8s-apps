@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - aws-ssm.yaml
   - consumer-k8s.yaml
+  - namespace-k8s.yaml

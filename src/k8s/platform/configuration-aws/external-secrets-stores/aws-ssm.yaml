@@ -5,6 +5,9 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
+  conditions:
+    - namespaces:
+        - external-secrets
   provider:
     aws:
       service: ParameterStore
