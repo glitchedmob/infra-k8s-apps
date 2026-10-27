@@ -5,7 +5,7 @@ resources:
   - cache-reader.yaml
   - cache-store.yaml
   - ssm-cache.yaml
-  - workload-ssm-cache.yaml
-  - workload-cache-readers.yaml
+  - namespace-projections.yaml
+  - namespace-readers.yaml
   - dex-ssm-split.yaml
   - readers.yaml

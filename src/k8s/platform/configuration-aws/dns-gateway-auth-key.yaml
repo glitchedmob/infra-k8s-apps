@@ -8,7 +8,7 @@ metadata:
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: tailnet-cache-k8s
+    name: kube-system-k8s
     kind: ClusterSecretStore
   target:
     name: dns-gateway-auth-key
@@ -16,5 +16,5 @@ spec:
   data:
     - secretKey: authkey
       remoteRef:
-        key: tailnet-ssm-cache
+        key: kube-system-secrets
         property: dnsGatewayAuthKey
