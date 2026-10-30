@@ -24,6 +24,13 @@ spec:
     primary:
       autoFailover: true
       autoFailoverDelay: 10m
+    replica:
+      bootstrapFrom:
+        physicalBackupTemplateRef:
+          name: erpnext-db-recovery-template
+      recovery:
+        enabled: true
+        errorDurationThreshold: 5m
   startupProbe:
     periodSeconds: 10
     timeoutSeconds: 5

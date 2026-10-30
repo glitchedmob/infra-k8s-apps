@@ -9,6 +9,7 @@ resources:
   - secretstore.yaml
   - externalsecret.yaml
   - storage.yaml
+  - database-recovery-backup.yaml
   - database.yaml
   - redis.yaml
   - redis-pdb.yaml
