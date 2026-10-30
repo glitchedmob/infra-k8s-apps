@@ -1,0 +1,21 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: PhysicalBackup
+metadata:
+  name: erpnext-db-recovery-template
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  mariaDbRef:
+    name: erpnext-db
+    waitForIt: false
+  schedule:
+    suspend: true
+  target: PreferReplica
+  storage:
+    persistentVolumeClaim:
+      storageClassName: longhorn
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
