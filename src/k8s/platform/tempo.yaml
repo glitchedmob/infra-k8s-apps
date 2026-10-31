@@ -10,12 +10,12 @@ spec:
   sources:
     - chart: tempo
       repoURL: https://grafana-community.github.io/helm-charts
-      targetRevision: 3.2.1
+      targetRevision: 2.2.4
       helm:
         values: |
           replicas: 1
           tempo:
-            tag: "3.1.1"
+            tag: "2.10.10"
             reportingEnabled: false
             retention: 168h
             resources:
@@ -61,14 +61,9 @@ spec:
                       endpoint: "0.0.0.0:4317"
                     http:
                       endpoint: "0.0.0.0:4318"
-            live_store:
+            ingester:
               max_block_duration: 5m
-            backend_scheduler:
-              provider:
-                compaction:
-                  compaction:
-                    block_retention: 168h
-            backend_worker:
+            compactor:
               compaction:
                 block_retention: 168h
             query_frontend:
@@ -95,12 +90,15 @@ spec:
                 remote_write:
                   - url: "http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090/api/v1/write"
                     send_exemplars: true
+              traces_storage:
+                path: /var/tempo/generator/traces
             overrides:
               defaults:
                 metrics_generator:
                   processors:
                     - span-metrics
                     - service-graphs
+                    - local-blocks
             usage_report:
               reporting_enabled: false
     - repoURL: ssh://git@github.com/glitchedmob/infra-k8s-apps.git
