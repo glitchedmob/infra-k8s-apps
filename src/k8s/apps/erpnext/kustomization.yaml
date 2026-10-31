@@ -42,7 +42,7 @@ generatorOptions:
     argocd.argoproj.io/sync-wave: "-3"
 images:
   - name: frappe/erpnext
-    newTag: v16.52.1
+    newTag: v16.53.0
 patches:
   - path: backup-patch.yaml
     target:
