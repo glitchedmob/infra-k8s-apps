@@ -10,7 +10,7 @@ spec:
   source:
     chart: psmdb-operator-crds
     repoURL: https://percona.github.io/percona-helm-charts
-    targetRevision: 1.23.0
+    targetRevision: 1.23.1
   destination:
     server: https://kubernetes.default.svc
     namespace: percona-mongodb-operator

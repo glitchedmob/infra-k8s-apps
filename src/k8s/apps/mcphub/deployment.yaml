@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mcphub
-          image: docker.io/samanhappy/mcphub:1.1.9@sha256:01ef22b1c7ab0a384e7118e358f1efbabea230cc2b29a1f55f6b67fa17c114e0
+          image: docker.io/samanhappy/mcphub:1.1.14@sha256:700013d712b7e74750bb2ce05492688833f62a39472db5e88753557002735dab
           imagePullPolicy: IfNotPresent
           workingDir: /app
           command:

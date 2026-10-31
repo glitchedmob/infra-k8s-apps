@@ -20,7 +20,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: speedtest
-          image: lscr.io/linuxserver/speedtest-tracker:v1.15.0-ls172
+          image: lscr.io/linuxserver/speedtest-tracker:v1.15.1-ls178
           ports:
             - name: http
               containerPort: 80

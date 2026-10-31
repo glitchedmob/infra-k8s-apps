@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-2"
     argocd.argoproj.io/sync-options: Prune=confirm
 spec:
-  image: mariadb:11.8.6
+  image: mariadb:11.8.9
   replicas: 2
   rootPasswordSecretKeyRef:
     name: erpnext-database
