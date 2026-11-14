@@ -1,0 +1,293 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": false,
+  "prConcurrentLimit": 2,
+  "argocd": {
+    "managerFilePatterns": [
+      "/^src\\/k8s\\/.*\\.ya?ml$/"
+    ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/^src\\/k8s\\/.*\\.ya?ml$/"
+    ]
+  },
+  "enabledManagers": [
+    "argocd",
+    "kubernetes",
+    "kustomize",
+    "helm-values",
+    "custom.regex"
+  ],
+  "includePaths": [
+    "src/k8s/**"
+  ],
+  "helm-values": {
+    "managerFilePatterns": [
+      "/^src\\/k8s\\/platform\\/openbao\\/bootstrap-values\\.yaml$/"
+    ]
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "(?:^|\\n)[ \\t]*(?:imageName|baseImage):[ \\t]*[\"']?(?<depName>[a-z0-9][a-z0-9._/-]*):(?<currentValue>[A-Za-z0-9_.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "path:[ \\t]+[^\\r\\n]+/image\\r?\\n[ \\t]*value:[ \\t]*[\"']?(?<depName>[a-z0-9][a-z0-9._/-]*):(?<currentValue>[A-Za-z0-9_.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/dex\\.yaml$/"
+      ],
+      "matchStrings": [
+        "image:\\r?\\n[ \\t]+tag:[ \\t]*[\"\\']?(?<currentValue>[^\\s\"\\'#]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/dexidp/dex",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/configuration\\/traefik\\/traefik-helmchartconfig\\.yaml$/"
+      ],
+      "matchStrings": [
+        "image:\\r?\\n[ \\t]+tag:[ \\t]*[\"\\']?(?<currentValue>[^\\s\"\\'#]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "traefik",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/tempo\\.yaml$/"
+      ],
+      "matchStrings": [
+        "tempo:\\r?\\n[ \\t]+tag:[ \\t]*[\"\\']?(?<currentValue>[^\\s\"\\'#]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "grafana/tempo",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/zitadel\\/values\\.yaml$/"
+      ],
+      "matchStrings": [
+        "(?:^|\\n)image:\\r?\\n  tag:[ \\t]*[\"\\']?(?<currentValue>[^\\s\"\\'#]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/zitadel/zitadel",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/zitadel\\/values\\.yaml$/"
+      ],
+      "matchStrings": [
+        "(?:^|\\n)login:\\r?\\n  image:\\r?\\n    tag:[ \\t]*[\"\\']?(?<currentValue>[^\\s\"\\'#]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/zitadel/zitadel-login",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "https://raw\\.githubusercontent\\.com/(?<depName>[^/\\s]+/[^/\\s]+)/(?<currentValue>v?\\d[^/\\s]*)/"
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/configuration\\/traefik\\/traefik-helmchartconfig\\.yaml$/"
+      ],
+      "matchStrings": [
+        "moduleName:[ \\t]*github\\.com/(?<depName>[^\\s]+)\\r?\\n[ \\t]*version:[ \\t]*(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^src\\/k8s\\/platform\\/headlamp\\.yaml$/"
+      ],
+      "matchStrings": [
+        "source:[ \\t]*https://artifacthub\\.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager\\r?\\n[ \\t]*version:[ \\t]*(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "headlamp-k8s/plugins",
+      "extractVersionTemplate": "^cert-manager-(?<version>.*)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Use the official GHCR backend for LinuxServer lookups and track image rebuilds.",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/speedtest-tracker"
+      ],
+      "overridePackageName": "ghcr.io/linuxserver/speedtest-tracker",
+      "versioning": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-ls(?<build>\\d+)$"
+    },
+    {
+      "description": "Group routine changes by function; major upgrades remain separate.",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "cluster platform"
+    },
+    {
+      "matchFileNames": [
+        "src/k8s/bootstrap/operators/base/{cnpg,k8up,kubeblocks-crds,longhorn,mariadb-operator-crds,percona-mongodb-crds,seaweedfs-operator}.yaml",
+        "src/k8s/bootstrap/operators/dependent/{db-operator,kubeblocks,mariadb-operator,percona-mongodb}.yaml",
+        "src/k8s/platform/argo-workflows.yaml",
+        "src/k8s/platform/seaweedfs*.yaml",
+        "src/k8s/platform/storage/**",
+        "src/k8s/platform/configuration/cnpg/**",
+        "src/k8s/platform/services/{argo-workflows,backup-base}/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "data and backups"
+    },
+    {
+      "matchFileNames": [
+        "src/k8s/bootstrap/operators/base/prometheus-operator-crds.yaml",
+        "src/k8s/bootstrap/operators/dependent/otel-operator.yaml",
+        "src/k8s/platform/{alloy,grafana-infra,kube-prometheus-stack,loki,otel-collector,prometheus-pushgateway,tempo,thanos}.yaml",
+        "src/k8s/platform/observability/**",
+        "src/k8s/platform/services/grafana-infra/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "observability"
+    },
+    {
+      "matchFileNames": [
+        "src/k8s/apps/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "applications"
+    },
+    {
+      "description": "Keep shared database runtime and dump-helper images together across consumers.",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/cloudnative-pg/postgresql",
+        "mariadb",
+        "ghcr.io/k8up-io/k8up"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "groupName": "data and backups"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": null
+    },
+    {
+      "description": "Keep paired components together even for major upgrades.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "codewithcj/sparkyfitness",
+        "codewithcj/sparkyfitness_server"
+      ],
+      "groupName": "SparkyFitness major upgrades"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "tempo",
+        "grafana/tempo"
+      ],
+      "groupName": "Tempo major upgrades"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/zitadel/zitadel",
+        "ghcr.io/zitadel/zitadel-login"
+      ],
+      "groupName": "ZITADEL major upgrades"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "mariadb-operator",
+        "mariadb-operator-crds"
+      ],
+      "groupName": "MariaDB operator major upgrades"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "psmdb-operator",
+        "psmdb-operator-crds"
+      ],
+      "groupName": "Percona MongoDB operator major upgrades"
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "kubeblocks",
+        "https://github.com/apecloud/kubeblocks.git"
+      ],
+      "groupName": "KubeBlocks operator major upgrades"
+    }
+  ]
+}
