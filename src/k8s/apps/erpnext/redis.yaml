@@ -41,7 +41,7 @@ spec:
             targetPort: redis
   componentSpecs:
     - name: redis
-      componentDef: redis-8-1.0.2
+      componentDef: redis-8-1.0.4
       serviceVersion: 8.4.0
       replicas: 2
       systemAccounts:
@@ -77,7 +77,7 @@ spec:
               requests:
                 storage: 2Gi
     - name: redis-sentinel
-      componentDef: redis-sentinel-8-1.0.2
+      componentDef: redis-sentinel-8-1.0.4
       serviceVersion: 8.4.0
       replicas: 3
       systemAccounts:
