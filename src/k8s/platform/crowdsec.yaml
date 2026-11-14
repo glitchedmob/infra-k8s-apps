@@ -11,11 +11,9 @@ spec:
   sources:
     - chart: crowdsec
       repoURL: https://crowdsecurity.github.io/helm-charts
-      targetRevision: 0.24.2
+      targetRevision: 0.24.3
       helm:
         values: |
-          image:
-            tag: v1.8.2
           container_runtime: containerd
           config:
             simulation.yaml: |

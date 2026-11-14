@@ -10,13 +10,11 @@ spec:
   sources:
     - chart: loki
       repoURL: https://grafana-community.github.io/helm-charts
-      targetRevision: 20.2.0
+      targetRevision: 21.2.3
       helm:
         values: |
           deploymentMode: Monolithic
           loki:
-            image:
-              tag: 3.7.9
             auth_enabled: false
             server:
               log_level: warn
@@ -97,8 +95,6 @@ spec:
               type: NodePort
               nodePort: 31001
           lokiCanary:
-            image:
-              tag: 3.7.9
             extraArgs:
               - -labelname=pod
               - -labelvalue=$(POD_NAME)
