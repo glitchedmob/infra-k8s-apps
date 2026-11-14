@@ -15,5 +15,14 @@
     "managerFilePatterns": [
       "/^src\\/k8s\\/.*\\.ya?ml$/"
     ]
-  }
+  },
+  "enabledManagers": [
+    "argocd",
+    "kubernetes",
+    "kustomize",
+    "helm-values"
+  ],
+  "includePaths": [
+    "src/k8s/**"
+  ]
 }
