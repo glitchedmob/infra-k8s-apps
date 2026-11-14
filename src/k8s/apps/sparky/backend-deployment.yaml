@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: server
-          image: codewithcj/sparkyfitness_server:v1.11.0
+          image: codewithcj/sparkyfitness_server:v1.12.1
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 1000
@@ -108,6 +108,8 @@ spec:
               value: "true"
             - name: SPARKY_FITNESS_FORCE_EMAIL_LOGIN
               value: "false"
+            - name: SPARKY_FITNESS_DISABLE_MAGIC_LINK_LOGIN
+              value: "true"
             - name: NODE_ENV
               value: production
             - name: TZ
@@ -129,7 +131,7 @@ spec:
             failureThreshold: 60
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /api/health/ready
               port: http
             periodSeconds: 10
             timeoutSeconds: 5
