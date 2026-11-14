@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "dependencyDashboardApproval": true,
+  "automerge": false,
+  "prConcurrentLimit": 2,
+  "argocd": {
+    "managerFilePatterns": [
+      "/^src\\/k8s\\/.*\\.ya?ml$/"
+    ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/^src\\/k8s\\/.*\\.ya?ml$/"
+    ]
+  }
 }
