@@ -6,7 +6,7 @@ metadata:
 spec:
   valuesContent: |-
     image:
-      tag: "3.7.16"
+      tag: "v3.7.19"
     deployment:
       replicas: 3
       readinessPath: /healthz
@@ -37,7 +37,7 @@ spec:
             type: CharDevice
       additionalContainers:
         - name: cloudflared
-          image: cloudflare/cloudflared:2026.10.7
+          image: cloudflare/cloudflared:2026.11.1
           imagePullPolicy: IfNotPresent
           command:
             - cloudflared
@@ -107,7 +107,7 @@ spec:
               cpu: 200m
               memory: 128Mi
         - name: tailscale
-          image: tailscale/tailscale:v1.104.4
+          image: tailscale/tailscale:v1.104.7
           env:
             - name: TS_AUTHKEY
               valueFrom:
@@ -216,7 +216,7 @@ spec:
       plugins:
         bouncer:
           moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
-          version: v1.8.1
+          version: v1.8.2
     volumes:
       - name: crowdsec-bouncer-key
         mountPath: /etc/traefik/crowdsec
