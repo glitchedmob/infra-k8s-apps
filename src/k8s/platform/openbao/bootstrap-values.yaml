@@ -38,7 +38,7 @@ server:
       readOnly: true
   extraInitContainers:
     - name: fetch-unseal-key
-      image: amazon/aws-cli:2.39.3
+      image: amazon/aws-cli:2.42.5
       command: ["/bin/sh", "-c"]
       args:
         - |
@@ -106,7 +106,7 @@ server:
           cpu: 250m
           memory: 256Mi
     - name: recover-raft-or-join
-      image: quay.io/openbao/openbao:2.7.2
+      image: quay.io/openbao/openbao:2.7.3
       command: ["/bin/sh", "/recovery-config/recover.sh"]
       env:
         - name: HOSTNAME
